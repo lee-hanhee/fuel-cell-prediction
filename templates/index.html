@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>PEMFC Performance Metric Prediction</title>
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="./static/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="./static/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="./static/css/slider.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+  <nav class="light-blue lighten-1" role="navigation">
+    <div class="nav-wrapper container">
+      <a id="logo-container" href="#" class="brand-logo">Logo</a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="#">Navbar Link</a></li>
+      </ul>
+      <ul id="nav-mobile" class="sidenav">
+        <li><a href="#">Navbar Link</a></li>
+      </ul>
+      <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+  <div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h1 class="header center orange-text">PEMFC Performance Metric Predictions</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">Predict the performance based on input parameters</h5>
+      </div>
+      <div class="row">
+        <form action="/predict" method="post" class="col s12">
+          <div class="row">
+            <div class="input-field col s4">
+              <label for="HCC"><b>Height of Cathode Channel (mm)</b></label>
+              <div class="slider-input-container">
+                <input type="range" id="HCC-slider" min="0" max="100" step="1">
+                <input placeholder="Height (mm)" name="HCC" id="HCC" type="text" class="validate">
+              </div>
+            </div>
+            <div class="input-field col s4">
+              <label for="WCC"><b>Width of Cathode Channel (mm)</b></label>
+              <div class="slider-input-container">
+                <input type="range" id="WCC-slider" min="0" max="100" step="1">
+                <input placeholder="Width (mm)" name="WCC" id="WCC" type="text" class="validate">
+              </div>
+            </div>
+            <div class="input-field col s4">
+              <label for="LCC"><b>Length of Cathode Channel (mm)</b></label>
+              <div class="slider-input-container">
+                <input type="range" id="LCC-slider" min="0" max="200" step="1">
+                <input placeholder="Length (mm)" name="LCC" id="LCC" type="text" class="validate">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s4">
+              <label for="Tamb"><b>Ambient Temperature (degC)</b></label>
+              <div class="slider-input-container">
+                <input type="range" id="Tamb-slider" min="-50" max="50" step="1">
+                <input placeholder="Ambient Temperature (degC)" name="Tamb" id="Tamb" type="text" class="validate">
+              </div>
+            </div>
+            <div class="input-field col s4">
+              <label for="Uin"><b>Airflow Velocity (m/s)</b></label>
+              <div class="slider-input-container">
+                <input type="range" id="Uin-slider" min="0" max="20" step="0.1">
+                <input placeholder="Airflow Velocity (m/s)" name="Uin" id="Uin" type="text" class="validate">
+              </div>
+            </div>
+            <div class="input-field col s4">
+              <label for="Q"><b>Heat Generation (W/m^2)</b></label>
+              <div class="slider-input-container">
+                <input type="range" id="Q-slider" min="0" max="7000" step="100">
+                <input placeholder="Heat Generation (W/m^2)" name="Q" id="Q" type="text" class="validate">
+              </div>
+            </div>
+          </div>
+          <div class="row center">
+            <button type="submit" class="btn-large waves-effect waves-light orange">Predict Performance</button>
+          </div>
+        </form>
+      </div>
+      <br>
+      {% if pred %}
+        <h5 class="header col s12 light">{{ pred }}</h5>
+      {% endif %}
+    </div>
+  </div>
+  <footer class="page-footer orange">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Company Bio</h5>
+          <p class="grey-text text-lighten-4">We are a team of engineering students working on this project as part of our academic curriculum. Support and feedback are greatly appreciated.</p>
+        </div>
+        <div class="col l6 s12">
+          <h5 class="white-text">Connect</h5>
+          <ul>
+            <li><a class="white-text" href="#!">LinkedIn</a></li>
+            <li><a class="white-text" href="#!">Twitter</a></li>
+            <li><a class="white-text" href="#!">Instagram</a></li>
+            <li><a class="white-text" href="#!">Facebook</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+        Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+      </div>
+    </div>
+  </footer>
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="./static/js/materialize.js"></script>
+  <script src="./static/js/init.js"></script>
+  <script src="./static/js/slider.js"></script>
+</body>
+</html>
