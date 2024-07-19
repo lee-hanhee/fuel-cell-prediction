@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn 
 import joblib
 import numpy as np
+import os
 
 # Define the DelpNN neural network class
 class DelpNN(nn.Module):
@@ -45,18 +46,24 @@ class TstaNN(nn.Module):
 # Create a Flask application instance
 app = Flask(__name__, template_folder='templates')
 
+# Define the path to the models directory
+models_dir = os.path.join(os.path.dirname(__file__), 'models')
+
 # Load the DelpNN model's trained weights
 delp_model = DelpNN()
-delp_model.load_state_dict(torch.load('Delp_10.6363.pth', map_location=torch.device('cpu')))
+delp_model_path = os.path.join(models_dir, 'Delp_10.6363.pth')
+delp_model.load_state_dict(torch.load(delp_model_path, map_location=torch.device('cpu')))
 delp_model.eval()
 
 # Load the TstaNN model's trained weights
 tsta_model = TstaNN()
-tsta_model.load_state_dict(torch.load('Tsta_0.7409.pth', map_location=torch.device('cpu')))
+tsta_model_path = os.path.join(models_dir, 'Tsta_0.7409.pth')
+tsta_model.load_state_dict(torch.load(tsta_model_path, map_location=torch.device('cpu')))
 tsta_model.eval()
 
 # Load the scaler used during training
-scaler_X = joblib.load('scaler_X.pkl')
+scaler_X_path = os.path.join(models_dir, 'scaler_X.pkl')
+scaler_X = joblib.load(scaler_X_path)
 
 @app.route('/')
 def home():
@@ -70,6 +77,9 @@ def predict():
             # Extract features from the form input and convert them to float
             feature_names = ['HCC', 'WCC', 'LCC', 'Tamb', 'Uin', 'Q']
             int_features = [float(request.form[name]) for name in feature_names]
+            
+            # Store the original user inputs for display
+            user_inputs = int_features.copy()
             
             # Convert mm to m and °C to K
             int_features[0] /= 1000  # HCC: mm to m
@@ -92,9 +102,23 @@ def predict():
 
                 tsta_prediction = tsta_model(final_features_tensor)
                 tsta_output = tsta_prediction.item()
+                
+            # Format the input parameters for display
+            input_parameters = (
+                f" HCC (mm): {user_inputs[0]}, "
+                f"WCC (mm): {user_inputs[1]}, "
+                f"LCC (mm): {user_inputs[2]}, "
+                f"Tamb (°C): {user_inputs[3]}, "
+                f"Uin (ms⁻¹): {user_inputs[4]}, "
+                f"Q (Wm⁻²): {user_inputs[5]}"
+            )
 
             # Generate a message to display on the webpage
-            message = f'Predicted Pressure Drop & Stack Temperature: {delp_output:.2f} Pa, {tsta_output:.2f} °C'
+            message = (
+                f"Input Parameters:{input_parameters}"
+                f" | Predicted Pressure Drop: {delp_output:.2f} Pa"
+                f" | Predicted Stack Temperature: {tsta_output:.2f} °C"
+            )
 
             return render_template('index.html', pred=message)
         except Exception as e:
