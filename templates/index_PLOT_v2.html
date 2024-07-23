@@ -28,69 +28,6 @@
     <div class="container">
       <br><br>
       <h1 class="header center orange-text">PEMFC Performance Metric Predictions</h1>
-      <div class="row center">
-        <h5 class="header col s12 light">Predict the performance based on input parameters</h5>
-      </div>
-      <div class="row">
-        <form action="/predict" method="post" class="col s12">
-          <div class="row">
-            <div class="input-field col s4">
-              <label for="HCC"><b>Height of Cathode Channel (mm)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="HCC-slider" min="1" max="2" step="0.1">
-                <input placeholder="Height (mm)" name="HCC" id="HCC" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4">
-              <label for="WCC"><b>Width of Cathode Channel (mm)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="WCC-slider" min="0.5" max="1.5" step="0.1">
-                <input placeholder="Width (mm)" name="WCC" id="WCC" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4">
-              <label for="LCC"><b>Length of Cathode Channel (mm)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="LCC-slider" min="30" max="90" step="1">
-                <input placeholder="Length (mm)" name="LCC" id="LCC" type="text" class="validate">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="input-field col s4">
-              <label for="Tamb"><b>Ambient Temperature (°C)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="Tamb-slider" min="-20" max="40" step="1">
-                <input placeholder="Ambient Temperature (°C)" name="Tamb" id="Tamb" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4">
-              <label for="Uin"><b>Airflow Velocity (ms⁻¹)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="Uin-slider" min="1" max="10" step="0.1">
-                <input placeholder="Airflow Velocity (ms⁻¹)" name="Uin" id="Uin" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4">
-              <label for="Q"><b>Heat Generation (Wm⁻²)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="Q-slider" min="1272" max="5040" step="1">
-                <input placeholder="Heat Generation (Wm⁻²)" name="Q" id="Q" type="text" class="validate">
-              </div>
-            </div>
-          </div>
-          <div class="row center">
-            <button type="submit" class="btn-large waves-effect waves-light orange">Predict Performance</button>
-          </div>
-        </form>
-      </div>
-      <br>
-      {% if pred %}
-        <h5 class="header col s12 light">{{ pred }}</h5>
-      {% endif %}
-    </div>
-    <div class="container">
-      <div class="row">
         <div class="col s12">
           <h5 class="header center orange-text">Generate Plot</h5>
         </div>
@@ -138,46 +75,39 @@
             </div>
           </div>
           <div class="row" id="fixed-variables-container">
-            <div class="input-field col s4 fixed-variable" id="fixed-HCC" style="display:none;">
-              <label for="fixedHCC"><b>Height of Cathode Channel (mm)</b></label>
+            <div class="input-field col s4">
+              <label for="fixed1"><b>Fixed Variable 1</b></label>
               <div class="slider-input-container">
-                <input type="range" id="fixedHCC-slider" min="1" max="2" step="0.1">
-                <input placeholder="Height (mm)" name="fixedHCC" id="fixedHCC" type="text" class="validate">
+                <input type="range" id="fixed1-slider" min="0" max="100" step="1">
+                <input placeholder="Fixed Variable 1" name="fixed1" id="fixed1" type="text" class="validate">
               </div>
             </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-WCC" style="display:none;">
-              <label for="fixedWCC"><b>Width of Cathode Channel (mm)</b></label>
+            <div class="input-field col s4">
+              <label for="fixed2"><b>Fixed Variable 2</b></label>
               <div class="slider-input-container">
-                <input type="range" id="fixedWCC-slider" min="0.5" max="1.5" step="0.1">
-                <input placeholder="Width (mm)" name="fixedWCC" id="fixedWCC" type="text" class="validate">
+                <input type="range" id="fixed2-slider" min="0" max="100" step="1">
+                <input placeholder="Fixed Variable 2" name="fixed2" id="fixed2" type="text" class="validate">
               </div>
             </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-LCC" style="display:none;">
-              <label for="fixedLCC"><b>Length of Cathode Channel (mm)</b></label>
+            <div class="input-field col s4">
+              <label for="fixed3"><b>Fixed Variable 3</b></label>
               <div class="slider-input-container">
-                <input type="range" id="fixedLCC-slider" min="30" max="90" step="1">
-                <input placeholder="Length (mm)" name="fixedLCC" id="fixedLCC" type="text" class="validate">
+                <input type="range" id="fixed3-slider" min="0" max="100" step="1">
+                <input placeholder="Fixed Variable 3" name="fixed3" id="fixed3" type="text" class="validate">
               </div>
             </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-Tamb" style="display:none;">
-              <label for="fixedTamb"><b>Ambient Temperature (°C)</b></label>
+            <div class="input-field col s4" id="fixed4-container" style="display:none;">
+              <label for="fixed4"><b>Fixed Variable 4</b></label>
               <div class="slider-input-container">
-                <input type="range" id="fixedTamb-slider" min="-20" max="40" step="1">
-                <input placeholder="Ambient Temperature (°C)" name="fixedTamb" id="fixedTamb" type="text" class="validate">
+                <input type="range" id="fixed4-slider" min="0" max="100" step="1">
+                <input placeholder="Fixed Variable 4" name="fixed4" id="fixed4" type="text" class="validate">
               </div>
             </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-Uin" style="display:none;">
-              <label for="fixedUin"><b>Airflow Velocity (ms⁻¹)</b></label>
+            <div class="input-field col s4" id="fixed5-container" style="display:none;">
+              <label for="fixed5"><b>Fixed Variable 5</b></label>
               <div class="slider-input-container">
-                <input type="range" id="fixedUin-slider" min="1" max="10" step="0.1">
-                <input placeholder="Airflow Velocity (ms⁻¹)" name="fixedUin" id="fixedUin" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-Q" style="display:none;">
-              <label for="fixedQ"><b>Heat Generation (Wm⁻²)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="fixedQ-slider" min="1272" max="5040" step="1">
-                <input placeholder="Heat Generation (Wm⁻²)" name="fixedQ" id="fixedQ" type="text" class="validate">
+                <input type="range" id="fixed5-slider" min="0" max="100" step="1">
+                <input placeholder="Fixed Variable 5" name="fixed5" id="fixed5" type="text" class="validate">
               </div>
             </div>
           </div>
@@ -211,7 +141,7 @@
     </div>
     <div class="footer-copyright">
       <div class="container">
-        Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Hanhee</a>
+        Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
       </div>
     </div>
   </footer>
@@ -220,6 +150,96 @@
   <script src="./static/js/materialize.js"></script>
   <script src="./static/js/init.js"></script>
   <script src="./static/js/slider.js"></script>
-  <script src="./static/js/plot.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('select');
+      var instances = M.FormSelect.init(elems);
+    });
+
+    document.getElementById('plotType').addEventListener('change', function() {
+      var plotType = this.value;
+      var var2Container = document.getElementById('var2-container');
+      var fixed4Container = document.getElementById('fixed4-container');
+      var fixed5Container = document.getElementById('fixed5-container');
+      if (plotType === '3d') {
+        var2Container.style.display = 'block';
+        fixed4Container.style.display = 'block';
+        fixed5Container.style.display = 'none';
+      } else {
+        var2Container.style.display = 'none';
+        fixed4Container.style.display = 'block';
+        fixed5Container.style.display = 'block';
+      }
+    });
+
+    function generatePlot() {
+      var plotType = document.getElementById('plotType').value;
+      var outputVariable = document.getElementById('outputVariable').value;
+      var var1 = document.getElementById('var1').value;
+      var var2 = document.getElementById('var2').value;
+      var fixed1 = document.getElementById('fixed1').value;
+      var fixed2 = document.getElementById('fixed2').value;
+      var fixed3 = document.getElementById('fixed3').value;
+      var fixed4 = document.getElementById('fixed4').value;
+      var fixed5 = document.getElementById('fixed5').value;
+
+      if (!plotType || !outputVariable || !var1 || (plotType === '3d' && !var2) || !fixed1 || !fixed2 || !fixed3 || (!fixed4 && plotType === '3d') || (!fixed5 && plotType === '2d')) {
+        alert('Please fill all fields for the selected plot type.');
+        return;
+      }
+
+      var plotData = {
+        plotType: plotType,
+        outputVariable: outputVariable,
+        var1: var1,
+        var2: var2,
+        fixed1: fixed1,
+        fixed2: fixed2,
+        fixed3: fixed3,
+        fixed4: fixed4,
+        fixed5: fixed5
+      };
+
+      fetch('/plot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(plotData),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          var plotDiv = document.getElementById('plot');
+          plotDiv.innerHTML = '';
+          var plotData = JSON.parse(data.plotData);
+          Plotly.newPlot('plot', plotData.data, plotData.layout);
+        } else {
+          alert('Error generating plot: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error generating plot: ' + error);
+      });
+    }
+
+    // Update slider and input value together
+    document.querySelectorAll('.slider-input-container input[type="range"]').forEach(slider => {
+      slider.addEventListener('input', function() {
+        const input = this.nextElementSibling;
+        input.value = this.value;
+      });
+    });
+
+    document.querySelectorAll('.slider-input-container input[type="text"]').forEach(input => {
+      input.addEventListener('input', function() {
+        const slider = this.previousElementSibling;
+        if (parseFloat(this.value) >= parseFloat(slider.min) && parseFloat(this.value) <= parseFloat(slider.max)) {
+          slider.value = this.value;
+        }
+      });
+    });
+  </script>
 </body>
 </html>

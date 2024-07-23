@@ -37,21 +37,21 @@
             <div class="input-field col s4">
               <label for="HCC"><b>Height of Cathode Channel (mm)</b></label>
               <div class="slider-input-container">
-                <input type="range" id="HCC-slider" min="1" max="2" step="0.1">
+                <input type="range" id="HCC-slider" min="0" max="100" step="1">
                 <input placeholder="Height (mm)" name="HCC" id="HCC" type="text" class="validate">
               </div>
             </div>
             <div class="input-field col s4">
               <label for="WCC"><b>Width of Cathode Channel (mm)</b></label>
               <div class="slider-input-container">
-                <input type="range" id="WCC-slider" min="0.5" max="1.5" step="0.1">
+                <input type="range" id="WCC-slider" min="0" max="100" step="1">
                 <input placeholder="Width (mm)" name="WCC" id="WCC" type="text" class="validate">
               </div>
             </div>
             <div class="input-field col s4">
               <label for="LCC"><b>Length of Cathode Channel (mm)</b></label>
               <div class="slider-input-container">
-                <input type="range" id="LCC-slider" min="30" max="90" step="1">
+                <input type="range" id="LCC-slider" min="0" max="200" step="1">
                 <input placeholder="Length (mm)" name="LCC" id="LCC" type="text" class="validate">
               </div>
             </div>
@@ -60,21 +60,21 @@
             <div class="input-field col s4">
               <label for="Tamb"><b>Ambient Temperature (°C)</b></label>
               <div class="slider-input-container">
-                <input type="range" id="Tamb-slider" min="-20" max="40" step="1">
+                <input type="range" id="Tamb-slider" min="-50" max="50" step="1">
                 <input placeholder="Ambient Temperature (°C)" name="Tamb" id="Tamb" type="text" class="validate">
               </div>
             </div>
             <div class="input-field col s4">
               <label for="Uin"><b>Airflow Velocity (ms⁻¹)</b></label>
               <div class="slider-input-container">
-                <input type="range" id="Uin-slider" min="1" max="10" step="0.1">
+                <input type="range" id="Uin-slider" min="0" max="20" step="0.1">
                 <input placeholder="Airflow Velocity (ms⁻¹)" name="Uin" id="Uin" type="text" class="validate">
               </div>
             </div>
             <div class="input-field col s4">
               <label for="Q"><b>Heat Generation (Wm⁻²)</b></label>
               <div class="slider-input-container">
-                <input type="range" id="Q-slider" min="1272" max="5040" step="1">
+                <input type="range" id="Q-slider" min="0" max="7000" step="100">
                 <input placeholder="Heat Generation (Wm⁻²)" name="Q" id="Q" type="text" class="validate">
               </div>
             </div>
@@ -88,8 +88,6 @@
       {% if pred %}
         <h5 class="header col s12 light">{{ pred }}</h5>
       {% endif %}
-    </div>
-    <div class="container">
       <div class="row">
         <div class="col s12">
           <h5 class="header center orange-text">Generate Plot</h5>
@@ -137,50 +135,6 @@
               <label for="var2">Variable 2</label>
             </div>
           </div>
-          <div class="row" id="fixed-variables-container">
-            <div class="input-field col s4 fixed-variable" id="fixed-HCC" style="display:none;">
-              <label for="fixedHCC"><b>Height of Cathode Channel (mm)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="fixedHCC-slider" min="1" max="2" step="0.1">
-                <input placeholder="Height (mm)" name="fixedHCC" id="fixedHCC" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-WCC" style="display:none;">
-              <label for="fixedWCC"><b>Width of Cathode Channel (mm)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="fixedWCC-slider" min="0.5" max="1.5" step="0.1">
-                <input placeholder="Width (mm)" name="fixedWCC" id="fixedWCC" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-LCC" style="display:none;">
-              <label for="fixedLCC"><b>Length of Cathode Channel (mm)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="fixedLCC-slider" min="30" max="90" step="1">
-                <input placeholder="Length (mm)" name="fixedLCC" id="fixedLCC" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-Tamb" style="display:none;">
-              <label for="fixedTamb"><b>Ambient Temperature (°C)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="fixedTamb-slider" min="-20" max="40" step="1">
-                <input placeholder="Ambient Temperature (°C)" name="fixedTamb" id="fixedTamb" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-Uin" style="display:none;">
-              <label for="fixedUin"><b>Airflow Velocity (ms⁻¹)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="fixedUin-slider" min="1" max="10" step="0.1">
-                <input placeholder="Airflow Velocity (ms⁻¹)" name="fixedUin" id="fixedUin" type="text" class="validate">
-              </div>
-            </div>
-            <div class="input-field col s4 fixed-variable" id="fixed-Q" style="display:none;">
-              <label for="fixedQ"><b>Heat Generation (Wm⁻²)</b></label>
-              <div class="slider-input-container">
-                <input type="range" id="fixedQ-slider" min="1272" max="5040" step="1">
-                <input placeholder="Heat Generation (Wm⁻²)" name="fixedQ" id="fixedQ" type="text" class="validate">
-              </div>
-            </div>
-          </div>
           <div class="row center">
             <button type="button" class="btn-large waves-effect waves-light orange" onclick="generatePlot()">Generate Plot</button>
           </div>
@@ -211,7 +165,7 @@
     </div>
     <div class="footer-copyright">
       <div class="container">
-        Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Hanhee</a>
+        Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
       </div>
     </div>
   </footer>
@@ -220,6 +174,63 @@
   <script src="./static/js/materialize.js"></script>
   <script src="./static/js/init.js"></script>
   <script src="./static/js/slider.js"></script>
-  <script src="./static/js/plot.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('select');
+      var instances = M.FormSelect.init(elems);
+    });
+
+    document.getElementById('plotType').addEventListener('change', function() {
+      var plotType = this.value;
+      var var2Container = document.getElementById('var2-container');
+      if (plotType === '3d') {
+        var2Container.style.display = 'block';
+      } else {
+        var2Container.style.display = 'none';
+      }
+    });
+
+    function generatePlot() {
+      var plotType = document.getElementById('plotType').value;
+      var outputVariable = document.getElementById('outputVariable').value;
+      var var1 = document.getElementById('var1').value;
+      var var2 = document.getElementById('var2').value;
+
+      if (!plotType || !outputVariable || !var1 || (plotType === '3d' && !var2)) {
+        alert('Please fill all fields for the selected plot type.');
+        return;
+      }
+
+      var plotData = {
+        plotType: plotType,
+        outputVariable: outputVariable,
+        var1: var1,
+        var2: var2
+      };
+
+      fetch('/plot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(plotData),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          var plotDiv = document.getElementById('plot');
+          plotDiv.innerHTML = '';
+          var plotData = JSON.parse(data.plotData);
+          Plotly.newPlot('plot', plotData.data, plotData.layout);
+        } else {
+          alert('Error generating plot: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error generating plot: ' + error);
+      });
+    }
+  </script>
 </body>
 </html>
