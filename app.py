@@ -146,9 +146,8 @@ def plot():
         plot_type = data['plotType']
         output_variable = data['outputVariable']
         var1 = data['var1']
-        var2 = data.get('var2')  # var2 might be None for 2D plots
+        var2 = data.get('var2')
 
-        # Define the bounds for each variable in user-friendly units (mm and °C)
         bounds = {
             'HCC': (1, 2),  # mm
             'WCC': (0.5, 1.5),  # mm
@@ -158,36 +157,29 @@ def plot():
             'Q': (1272, 5040)  # W/m²
         }
 
-        # Generate linspace values based on bounds for the selected variables
         var1_values = np.linspace(bounds[var1][0], bounds[var1][1], 100)
         var2_values = np.linspace(bounds[var2][0], bounds[var2][1], 100) if var2 else [0]
 
-        # Extract fixed values from the request data and convert units where necessary
         fixed_values = []
         for feature in ['HCC', 'WCC', 'LCC', 'Tamb', 'Uin', 'Q']:
             if feature != var1 and feature != var2:
                 value = float(data['fixedValues'][feature])
-                # Convert units
                 if feature in ['HCC', 'WCC', 'LCC']:
                     value /= 1000  # Convert mm to m
                 elif feature == 'Tamb':
                     value += 273.15  # Convert °C to K
                 fixed_values.append(value)
             else:
-                fixed_values.append(0)  # Placeholder value for independent variables
+                fixed_values.append(0)
 
-        # Map variable names to their indices
         feature_names = ['HCC', 'WCC', 'LCC', 'Tamb', 'Uin', 'Q']
         feature_indices = {name: i for i, name in enumerate(feature_names)}
 
-        # Initialize the data array
         Z = np.zeros((len(var1_values), len(var2_values)))
 
-        # Generate predictions based on the model
         for i, v1 in enumerate(var1_values):
             for j, v2 in enumerate(var2_values):
-                features = fixed_values.copy()  # Start with fixed values
-                # Convert units for the independent variables
+                features = fixed_values.copy()
                 if var1 in ['HCC', 'WCC', 'LCC']:
                     v1 /= 1000  # Convert mm to m
                 elif var1 == 'Tamb':
@@ -216,28 +208,24 @@ def plot():
                         prediction = tsta_model(feature_tensor)
                     Z[i, j] = prediction.item()
 
-        # Create the plot
+        x_label = var1
+        y_label = var2 if var2 else "Index"
+        z_label = output_variable
+
         if plot_type == '2d':
             plot_data = [
                 go.Scatter(x=var1_values, y=Z[:, 0], mode='lines')
             ]
-            layout = go.Layout(
-                title='2D Plot',
-                xaxis=dict(title=var1),
-                yaxis=dict(title=output_variable)
-            )
+            layout = go.Layout(title='2D Plot', xaxis_title=x_label, yaxis_title=z_label)
         elif plot_type == '3d':
             plot_data = [
                 go.Surface(z=Z, x=var1_values, y=var2_values)
             ]
-            layout = go.Layout(
-                title='3D Plot',
-                scene=dict(
-                    xaxis=dict(title=var1),
-                    yaxis=dict(title=var2),
-                    zaxis=dict(title=output_variable)
-                )
-            )
+            layout = go.Layout(title='3D Plot', scene=dict(
+                xaxis=dict(title=x_label),
+                yaxis=dict(title=y_label),
+                zaxis=dict(title=z_label)
+            ))
 
         plot_json = pio.to_json({'data': plot_data, 'layout': layout})
 
