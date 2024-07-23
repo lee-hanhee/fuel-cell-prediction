@@ -10,20 +10,26 @@ import plotly.io as pio
 # Define the DelpNN neural network class
 class DelpNN(nn.Module):
     def __init__(self):
-        super(DelpNN, self).__init__()
-        self.fc1 = nn.Linear(6, 256)
-        self.fc2 = nn.Linear(256, 128)
-        self.fc3 = nn.Linear(128, 64)
-        self.fc4 = nn.Linear(64, 16)
-        self.fc5 = nn.Linear(16, 1)
-        self.relu = nn.ReLU()
+        super(DelpNN, self).__init__()  # Initialize the superclass
+        # Define the layers of the neural network
+        self.fc1 = nn.Linear(6, 256)  # First fully connected layer with 6 inputs and 256 outputs
+        self.fc2 = nn.Linear(256, 128)  # Second fully connected layer with 256 inputs and 128 outputs
+        self.fc3 = nn.Linear(128, 64)    # Third fully connected layer with 128 inputs and 64 outputs
+        self.fc4 = nn.Linear(64, 16)    # Fourth fully connected layer with 64 inputs and 16 outputs
+        self.fc5 = nn.Linear(16, 1)    # Fifth fully connected layer with 16 inputs and 1 output (regression)
+        self.relu = nn.ReLU()  # Activation function used between layers
+        self.dropout = nn.Dropout(p=0.5)  # Dropout layer with a dropout probability of 0.5
 
     def forward(self, x):
-        x = self.relu(self.fc1(x))
-        x = self.relu(self.fc2(x))
-        x = self.relu(self.fc3(x))
-        x = self.relu(self.fc4(x))
-        x = self.fc5(x)
+        x = self.relu(self.fc1(x))  # Pass input through the first layer and apply ReLU activation
+        x = self.dropout(x)  # Apply dropout
+        x = self.relu(self.fc2(x))  # Pass through the second layer and apply ReLU activation
+        x = self.dropout(x)  # Apply dropout
+        x = self.relu(self.fc3(x))  # Pass through the third layer and apply ReLU activation
+        x = self.dropout(x)  # Apply dropout
+        x = self.relu(self.fc4(x))  # Pass through the fourth layer and apply ReLU activation
+        x = self.dropout(x)  # Apply dropout
+        x = self.fc5(x)  # Output layer produces final output, no activation (linear output)
         return x
 
 # Define the TstaNN neural network class
