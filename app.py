@@ -73,7 +73,7 @@ Tsta_scaler_X = joblib.load(Tsta_scaler_X_path)
 @app.route('/')
 def home():
     # Serve the main page
-    return render_template("index_ALL_v4.html")  
+    return render_template("index.html")  
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -127,11 +127,11 @@ def predict():
                 f" | Predicted Stack Temperature: {tsta_output:.2f} °C"
             )
 
-            return render_template('index_ALL_v4.html', pred=message)
+            return render_template('index.html', pred=message)
         except Exception as e:
             # If an error occurs, print it and show an error message on the webpage
             print("Error during prediction:", e)
-            return render_template('index_ALL_v4.html', pred='Error in making prediction.')
+            return render_template('index.html', pred='Error in making prediction.')
 
 @app.route('/plot', methods=['POST'])
 def plot():
