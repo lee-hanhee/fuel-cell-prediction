@@ -221,12 +221,8 @@ def plot():
             plot_data = [
                 go.Surface(z=Z, x=var1_values, y=var2_values)
             ]
-            layout = go.Layout(title='3D Plot', scene=dict(
-                xaxis=dict(title=x_label),
-                yaxis=dict(title=y_label),
-                zaxis=dict(title=z_label)
-            ))
-
+            layout = go.Layout(title='3D Plot', scene_xaxis_title=x_label, scene_yaxis_title=y_label, scene_zaxis_title=z_label)
+            
         plot_json = pio.to_json({'data': plot_data, 'layout': layout})
 
         return jsonify(success=True, plotData=plot_json)
