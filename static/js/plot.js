@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var instances = M.FormSelect.init(elems);
 });
 
-document.getElementById('plotType').addEventListener('change', function () {
+document.getElementById('plotType').addEventListener('change', function (event) {
+    event.preventDefault(); // Prevent default behavior
     var plotType = this.value;
     var var2Container = document.getElementById('var2-container');
     var fixed4Container = document.getElementById('fixed4-container');
@@ -19,11 +20,17 @@ document.getElementById('plotType').addEventListener('change', function () {
     }
 });
 
-document.getElementById('var1').addEventListener('change', function () {
+document.getElementById('outputVariable').addEventListener('change', function (event) {
+    event.preventDefault(); // Prevent default behavior
+});
+
+document.getElementById('var1').addEventListener('change', function (event) {
+    event.preventDefault(); // Prevent default behavior
     updateFixedVariables();
 });
 
-document.getElementById('var2').addEventListener('change', function () {
+document.getElementById('var2').addEventListener('change', function (event) {
+    event.preventDefault(); // Prevent default behavior
     updateFixedVariables();
 });
 
@@ -69,6 +76,8 @@ function generatePlot() {
         fixedValues: fixedValues
     };
 
+    console.log("Plot Data:", plotData);
+
     fetch('/plot', {
         method: 'POST',
         headers: {
@@ -95,14 +104,16 @@ function generatePlot() {
 
 // Update slider and input value together
 document.querySelectorAll('.slider-input-container input[type="range"]').forEach(slider => {
-    slider.addEventListener('input', function () {
+    slider.addEventListener('input', function (event) {
+        event.preventDefault(); // Prevent default behavior
         const input = this.nextElementSibling;
         input.value = this.value;
     });
 });
 
 document.querySelectorAll('.slider-input-container input[type="text"]').forEach(input => {
-    input.addEventListener('input', function () {
+    input.addEventListener('input', function (event) {
+        event.preventDefault(); // Prevent default behavior
         const slider = this.previousElementSibling;
         if (parseFloat(this.value) >= parseFloat(slider.min) && parseFloat(this.value) <= parseFloat(slider.max)) {
             slider.value = this.value;
