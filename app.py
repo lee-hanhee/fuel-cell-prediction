@@ -116,24 +116,35 @@ def predict():
                 tsta_prediction = tsta_model(Tsta_final_features_tensor)
                 tsta_output = tsta_prediction.item()
                 
-            # Format the input parameters for display
-            input_parameters = (
-                f" HCC (mm): {user_inputs[0]}, "
+            # Create a structured result object for the template
+            result = {
+                'inputs': {
+                    'HCC': user_inputs[0],
+                    'WCC': user_inputs[1],
+                    'LCC': user_inputs[2],
+                    'Tamb': user_inputs[3],
+                    'Uin': user_inputs[4],
+                    'Q': user_inputs[5]
+                },
+                'predictions': {
+                    'pressure_drop': delp_output,
+                    'stack_temperature': tsta_output
+                }
+            }
+
+            # Also keep the legacy message format for backward compatibility
+            message = (
+                f"Input Parameters: HCC (mm): {user_inputs[0]}, "
                 f"WCC (mm): {user_inputs[1]}, "
                 f"LCC (mm): {user_inputs[2]}, "
                 f"Tamb (°C): {user_inputs[3]}, "
                 f"Uin (ms⁻¹): {user_inputs[4]}, "
                 f"Q (Wm⁻²): {user_inputs[5]}"
-            )
-
-            # Generate a message to display on the webpage
-            message = (
-                f"Input Parameters:{input_parameters}"
                 f" | Predicted Pressure Drop: {delp_output:.2f} Pa"
                 f" | Predicted Stack Temperature: {tsta_output:.2f} °C"
             )
 
-            return render_template('index.html', pred=message)
+            return render_template('index.html', pred=message, result=result)
         except Exception as e:
             # If an error occurs, print it and show an error message on the webpage
             print("Error during prediction:", e)

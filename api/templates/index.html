@@ -1,470 +1,808 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PEMFC Performance Metrics</title>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <!-- Custom CSS -->
-  <link href="{{ url_for('static', filename='css/style.css') }}" type="text/css" rel="stylesheet">
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Plotly.js -->
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-<body data-bs-theme="light">
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg sticky-top" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand" href="#">
-        <i class="bi bi-battery-charging"></i> Fuel Cell Predictor
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#prediction">Prediction</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#visualization">Visualization</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#about">About</a>
-          </li>
-          <li class="nav-item">
-            <button class="btn theme-toggle" id="theme-toggle">
-              <i class="bi bi-moon-fill"></i>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Header Banner -->
-  <header class="bg-primary text-white text-center py-5">
-    <div class="container">
-      <h1>PEMFC Performance Metric Predictions</h1>
-      <p class="lead">Predict fuel cell performance based on input parameters</p>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main>
-    <!-- Prediction Section -->
-    <section class="py-5" id="prediction">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PEMFC Performance Metrics</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <!-- Custom CSS -->
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      type="text/css"
+      rel="stylesheet"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body data-bs-theme="light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top" id="mainNav">
       <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-10">
-            <div class="card shadow">
-              <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">Input Parameters</h2>
-              </div>
-              <div class="card-body">
-                <form action="/predict" method="post" id="prediction-form" class="needs-validation" novalidate>
-                  <div class="row g-3">
-                    <!-- First Row of Parameters -->
-                    <div class="col-md-4">
-                      <div class="form-group mb-3">
-                        <label for="HCC" class="form-label">Height of Cathode Channel (mm)</label>
-                        <div class="input-group">
-                          <input type="range" class="form-range" id="HCC-slider" min="1" max="2" step="0.1" value="1.5">
-                          <input type="text" class="form-control" id="HCC" name="HCC" required 
-                                pattern="^[0-9]+(\.[0-9]+)?$" placeholder="1.0-2.0">
-                          <div class="invalid-feedback">
-                            Please enter a value between 1.0 and 2.0 mm.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <div class="form-group mb-3">
-                        <label for="WCC" class="form-label">Width of Cathode Channel (mm)</label>
-                        <div class="input-group">
-                          <input type="range" class="form-range" id="WCC-slider" min="0.5" max="1.5" step="0.1" value="1.0">
-                          <input type="text" class="form-control" id="WCC" name="WCC" required 
-                                pattern="^[0-9]+(\.[0-9]+)?$" placeholder="0.5-1.5">
-                          <div class="invalid-feedback">
-                            Please enter a value between 0.5 and 1.5 mm.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <div class="form-group mb-3">
-                        <label for="LCC" class="form-label">Length of Cathode Channel (mm)</label>
-                        <div class="input-group">
-                          <input type="range" class="form-range" id="LCC-slider" min="30" max="90" step="1" value="60">
-                          <input type="text" class="form-control" id="LCC" name="LCC" required 
-                                pattern="^[0-9]+(\.[0-9]+)?$" placeholder="30-90">
-                          <div class="invalid-feedback">
-                            Please enter a value between 30 and 90 mm.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <!-- Second Row of Parameters -->
-                    <div class="col-md-4">
-                      <div class="form-group mb-3">
-                        <label for="Tamb" class="form-label">Ambient Temperature (°C)</label>
-                        <div class="input-group">
-                          <input type="range" class="form-range" id="Tamb-slider" min="-20" max="40" step="1" value="25">
-                          <input type="text" class="form-control" id="Tamb" name="Tamb" required 
-                                pattern="^-?[0-9]+(\.[0-9]+)?$" placeholder="-20-40">
-                          <div class="invalid-feedback">
-                            Please enter a value between -20 and 40 °C.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <div class="form-group mb-3">
-                        <label for="Uin" class="form-label">Airflow Velocity (ms⁻¹)</label>
-                        <div class="input-group">
-                          <input type="range" class="form-range" id="Uin-slider" min="1" max="10" step="0.1" value="5">
-                          <input type="text" class="form-control" id="Uin" name="Uin" required 
-                                pattern="^[0-9]+(\.[0-9]+)?$" placeholder="1-10">
-                          <div class="invalid-feedback">
-                            Please enter a value between 1 and 10 ms⁻¹.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <div class="form-group mb-3">
-                        <label for="Q" class="form-label">Heat Generation (Wm⁻²)</label>
-                        <div class="input-group">
-                          <input type="range" class="form-range" id="Q-slider" min="1272" max="5040" step="1" value="3000">
-                          <input type="text" class="form-control" id="Q" name="Q" required 
-                                pattern="^[0-9]+(\.[0-9]+)?$" placeholder="1272-5040">
-                          <div class="invalid-feedback">
-                            Please enter a value between 1272 and 5040 Wm⁻².
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg" id="predict-btn">
-                      <span class="spinner-border spinner-border-sm d-none" id="loading-spinner" role="status" aria-hidden="true"></span>
-                      Predict Performance
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-            
-            <!-- Results Card -->
-            {% if pred %}
-            <div class="card shadow mt-4">
-              <div class="card-header bg-success text-white">
-                <h3 class="mb-0">Prediction Results</h3>
-              </div>
-              <div class="card-body">
-                <div class="result-container p-3">
-                  <p class="fs-5">{{ pred }}</p>
-                  <div class="row mt-4">
-                    <div class="col-md-6">
-                      <div class="card h-100">
-                        <div class="card-body text-center">
-                          <h4 class="card-title">Pressure Drop</h4>
-                          <p class="display-5 text-primary" id="pressure-result">
-                            {{ pred.split('|')[1].split(':')[1] if '|' in pred else 'N/A' }}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="card h-100">
-                        <div class="card-body text-center">
-                          <h4 class="card-title">Stack Temperature</h4>
-                          <p class="display-5 text-danger" id="temperature-result">
-                            {{ pred.split('|')[2].split(':')[1] if '|' in pred and pred.split('|')|length > 2 else 'N/A' }}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Visualization Section -->
-    <section class="py-5 bg-light" id="visualization">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-10">
-            <div class="card shadow">
-              <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">Generate Visualization</h2>
-              </div>
-              <div class="card-body">
-                <form id="plot-form" class="row g-3">
-                  <!-- Plot Type Selection -->
-                  <div class="col-md-4">
-                    <div class="form-group mb-3">
-                      <label for="plotType" class="form-label">Plot Type</label>
-                      <select class="form-select" id="plotType" required>
-                        <option value="" disabled selected>Choose plot type</option>
-                        <option value="2d">2D Plot</option>
-                        <option value="3d">3D Plot</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <!-- Output Variable Selection -->
-                  <div class="col-md-4">
-                    <div class="form-group mb-3">
-                      <label for="outputVariable" class="form-label">Output Variable</label>
-                      <select class="form-select" id="outputVariable" required>
-                        <option value="" disabled selected>Choose output variable</option>
-                        <option value="pressure_drop">Pressure Drop</option>
-                        <option value="stack_temperature">Stack Temperature</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <!-- Variable 1 Selection -->
-                  <div class="col-md-4">
-                    <div class="form-group mb-3">
-                      <label for="var1" class="form-label">X-Axis Variable</label>
-                      <select class="form-select" id="var1" required>
-                        <option value="" disabled selected>Choose Variable 1</option>
-                        <option value="HCC">Height of Cathode Channel (HCC)</option>
-                        <option value="WCC">Width of Cathode Channel (WCC)</option>
-                        <option value="LCC">Length of Cathode Channel (LCC)</option>
-                        <option value="Tamb">Ambient Temperature (Tamb)</option>
-                        <option value="Uin">Airflow Velocity (Uin)</option>
-                        <option value="Q">Heat Generation (Q)</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <!-- Variable 2 Selection (for 3D plots) -->
-                  <div class="col-md-4 d-none" id="var2-container">
-                    <div class="form-group mb-3">
-                      <label for="var2" class="form-label">Y-Axis Variable</label>
-                      <select class="form-select" id="var2">
-                        <option value="" disabled selected>Choose Variable 2</option>
-                        <option value="HCC">Height of Cathode Channel (HCC)</option>
-                        <option value="WCC">Width of Cathode Channel (WCC)</option>
-                        <option value="LCC">Length of Cathode Channel (LCC)</option>
-                        <option value="Tamb">Ambient Temperature (Tamb)</option>
-                        <option value="Uin">Airflow Velocity (Uin)</option>
-                        <option value="Q">Heat Generation (Q)</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <!-- Fixed Variables Container -->
-                  <div class="row mt-3" id="fixed-variables-container">
-                    <h5 class="mb-3">Fixed Parameters</h5>
-                    <!-- HCC -->
-                    <div class="col-md-4 fixed-variable d-none" id="fixed-HCC">
-                      <div class="form-group mb-3">
-                        <label for="fixedHCC" class="form-label">Height of Cathode Channel (mm)</label>
-                        <input type="text" class="form-control" id="fixedHCC" value="1.5">
-                      </div>
-                    </div>
-                    <!-- WCC -->
-                    <div class="col-md-4 fixed-variable d-none" id="fixed-WCC">
-                      <div class="form-group mb-3">
-                        <label for="fixedWCC" class="form-label">Width of Cathode Channel (mm)</label>
-                        <input type="text" class="form-control" id="fixedWCC" value="1.0">
-                      </div>
-                    </div>
-                    <!-- LCC -->
-                    <div class="col-md-4 fixed-variable d-none" id="fixed-LCC">
-                      <div class="form-group mb-3">
-                        <label for="fixedLCC" class="form-label">Length of Cathode Channel (mm)</label>
-                        <input type="text" class="form-control" id="fixedLCC" value="60">
-                      </div>
-                    </div>
-                    <!-- Tamb -->
-                    <div class="col-md-4 fixed-variable d-none" id="fixed-Tamb">
-                      <div class="form-group mb-3">
-                        <label for="fixedTamb" class="form-label">Ambient Temperature (°C)</label>
-                        <input type="text" class="form-control" id="fixedTamb" value="25">
-                      </div>
-                    </div>
-                    <!-- Uin -->
-                    <div class="col-md-4 fixed-variable d-none" id="fixed-Uin">
-                      <div class="form-group mb-3">
-                        <label for="fixedUin" class="form-label">Airflow Velocity (ms⁻¹)</label>
-                        <input type="text" class="form-control" id="fixedUin" value="5">
-                      </div>
-                    </div>
-                    <!-- Q -->
-                    <div class="col-md-4 fixed-variable d-none" id="fixed-Q">
-                      <div class="form-group mb-3">
-                        <label for="fixedQ" class="form-label">Heat Generation (Wm⁻²)</label>
-                        <input type="text" class="form-control" id="fixedQ" value="3000">
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="text-center mt-4">
-                    <button type="button" class="btn btn-primary btn-lg" id="generate-plot-btn" onclick="generatePlot()">
-                      <span class="spinner-border spinner-border-sm d-none" id="plot-loading-spinner" role="status" aria-hidden="true"></span>
-                      Generate Visualization
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-            
-            <!-- Plot Display -->
-            <div class="card shadow mt-4">
-              <div class="card-header bg-primary text-white">
-                <h3 class="mb-0">Visualization Results</h3>
-              </div>
-              <div class="card-body">
-                <div id="plot-container" class="d-flex justify-content-center">
-                  <div id="plot" class="w-100" style="min-height: 500px;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- About Section -->
-    <section class="py-5" id="about">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-10">
-            <div class="card shadow">
-              <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">About This Project</h2>
-              </div>
-              <div class="card-body">
-                <h5>Fuel Cell Performance Prediction</h5>
-                <p class="lead">
-                  This tool provides predictions for PEM fuel cell performance metrics based on physical parameters.
-                </p>
-                <p>
-                  The predictions are generated using two neural network models:
-                </p>
-                <ul>
-                  <li><strong>DelpNN</strong>: Predicts pressure drop across the fuel cell</li>
-                  <li><strong>TstaNN</strong>: Predicts stack temperature</li>
-                </ul>
-                <p>
-                  Users can input six key parameters to generate predictions or create visualizations to understand 
-                  how changes in these parameters affect fuel cell performance.
-                </p>
-                
-                <h5 class="mt-4">Input Parameters:</h5>
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>Parameter</th>
-                        <th>Description</th>
-                        <th>Range</th>
-                        <th>Unit</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>HCC</td>
-                        <td>Height of Cathode Channel</td>
-                        <td>1.0 - 2.0</td>
-                        <td>mm</td>
-                      </tr>
-                      <tr>
-                        <td>WCC</td>
-                        <td>Width of Cathode Channel</td>
-                        <td>0.5 - 1.5</td>
-                        <td>mm</td>
-                      </tr>
-                      <tr>
-                        <td>LCC</td>
-                        <td>Length of Cathode Channel</td>
-                        <td>30 - 90</td>
-                        <td>mm</td>
-                      </tr>
-                      <tr>
-                        <td>Tamb</td>
-                        <td>Ambient Temperature</td>
-                        <td>-20 - 40</td>
-                        <td>°C</td>
-                      </tr>
-                      <tr>
-                        <td>Uin</td>
-                        <td>Airflow Velocity</td>
-                        <td>1 - 10</td>
-                        <td>ms⁻¹</td>
-                      </tr>
-                      <tr>
-                        <td>Q</td>
-                        <td>Heat Generation</td>
-                        <td>1272 - 5040</td>
-                        <td>Wm⁻²</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="py-5 bg-dark text-white">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-6">
-          <h4>Fuel Cell Predictor</h4>
-          <p>A tool for predicting PEMFC performance metrics based on physical parameters.</p>
-        </div>
-        <div class="col-lg-3">
-          <h5>Navigation</h5>
-          <ul class="list-unstyled">
-            <li><a href="#prediction" class="text-white">Prediction</a></li>
-            <li><a href="#visualization" class="text-white">Visualization</a></li>
-            <li><a href="#about" class="text-white">About</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-3">
-          <h5>Connect</h5>
-          <ul class="list-unstyled">
-            <li><a href="#" class="text-white"><i class="bi bi-linkedin me-2"></i>LinkedIn</a></li>
-            <li><a href="#" class="text-white"><i class="bi bi-github me-2"></i>GitHub</a></li>
-            <li><a href="#" class="text-white"><i class="bi bi-envelope-fill me-2"></i>Contact</a></li>
+        <a class="navbar-brand" href="#">
+          <i class="bi bi-battery-charging"></i> Fuel Cell Predictor
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarResponsive"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#prediction">Prediction</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#visualization">Visualization</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#about">About</a>
+            </li>
+            <li class="nav-item">
+              <button class="btn theme-toggle" id="theme-toggle">
+                <i class="bi bi-moon-fill"></i>
+              </button>
+            </li>
           </ul>
         </div>
       </div>
-      <div class="row mt-4">
-        <div class="col text-center">
-          <p class="mb-0">© 2023 Fuel Cell Predictor | Made by Hanhee</p>
+    </nav>
+
+    <!-- Header Banner -->
+    <header class="bg-primary text-white text-center py-5">
+      <div class="container">
+        <h1>PEMFC Performance Metric Predictions</h1>
+        <p class="lead">
+          Predict fuel cell performance based on input parameters
+        </p>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Prediction Section -->
+      <section class="py-5" id="prediction">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-10">
+              <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                  <h2 class="mb-0">Input Parameters</h2>
+                </div>
+                <div class="card-body">
+                  <form
+                    action="/predict"
+                    method="post"
+                    id="prediction-form"
+                    class="needs-validation"
+                    novalidate
+                  >
+                    <div class="row g-3">
+                      <!-- First Row of Parameters -->
+                      <div class="col-md-4">
+                        <div class="form-group mb-3">
+                          <label for="HCC" class="form-label"
+                            >Height of Cathode Channel (mm)</label
+                          >
+                          <div class="input-group">
+                            <input
+                              type="range"
+                              class="form-range"
+                              id="HCC-slider"
+                              min="1"
+                              max="2"
+                              step="0.1"
+                              value="1.5"
+                            />
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="HCC"
+                              name="HCC"
+                              required
+                              pattern="^[0-9]+(\.[0-9]+)?$"
+                              placeholder="1.0-2.0"
+                            />
+                            <div class="invalid-feedback">
+                              Please enter a value between 1.0 and 2.0 mm.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group mb-3">
+                          <label for="WCC" class="form-label"
+                            >Width of Cathode Channel (mm)</label
+                          >
+                          <div class="input-group">
+                            <input
+                              type="range"
+                              class="form-range"
+                              id="WCC-slider"
+                              min="0.5"
+                              max="1.5"
+                              step="0.1"
+                              value="1.0"
+                            />
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="WCC"
+                              name="WCC"
+                              required
+                              pattern="^[0-9]+(\.[0-9]+)?$"
+                              placeholder="0.5-1.5"
+                            />
+                            <div class="invalid-feedback">
+                              Please enter a value between 0.5 and 1.5 mm.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group mb-3">
+                          <label for="LCC" class="form-label"
+                            >Length of Cathode Channel (mm)</label
+                          >
+                          <div class="input-group">
+                            <input
+                              type="range"
+                              class="form-range"
+                              id="LCC-slider"
+                              min="30"
+                              max="90"
+                              step="1"
+                              value="60"
+                            />
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="LCC"
+                              name="LCC"
+                              required
+                              pattern="^[0-9]+(\.[0-9]+)?$"
+                              placeholder="30-90"
+                            />
+                            <div class="invalid-feedback">
+                              Please enter a value between 30 and 90 mm.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Second Row of Parameters -->
+                      <div class="col-md-4">
+                        <div class="form-group mb-3">
+                          <label for="Tamb" class="form-label"
+                            >Ambient Temperature (°C)</label
+                          >
+                          <div class="input-group">
+                            <input
+                              type="range"
+                              class="form-range"
+                              id="Tamb-slider"
+                              min="-20"
+                              max="40"
+                              step="1"
+                              value="25"
+                            />
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="Tamb"
+                              name="Tamb"
+                              required
+                              pattern="^-?[0-9]+(\.[0-9]+)?$"
+                              placeholder="-20-40"
+                            />
+                            <div class="invalid-feedback">
+                              Please enter a value between -20 and 40 °C.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group mb-3">
+                          <label for="Uin" class="form-label"
+                            >Airflow Velocity (ms⁻¹)</label
+                          >
+                          <div class="input-group">
+                            <input
+                              type="range"
+                              class="form-range"
+                              id="Uin-slider"
+                              min="1"
+                              max="10"
+                              step="0.1"
+                              value="5"
+                            />
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="Uin"
+                              name="Uin"
+                              required
+                              pattern="^[0-9]+(\.[0-9]+)?$"
+                              placeholder="1-10"
+                            />
+                            <div class="invalid-feedback">
+                              Please enter a value between 1 and 10 ms⁻¹.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group mb-3">
+                          <label for="Q" class="form-label"
+                            >Heat Generation (Wm⁻²)</label
+                          >
+                          <div class="input-group">
+                            <input
+                              type="range"
+                              class="form-range"
+                              id="Q-slider"
+                              min="1272"
+                              max="5040"
+                              step="1"
+                              value="3000"
+                            />
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="Q"
+                              name="Q"
+                              required
+                              pattern="^[0-9]+(\.[0-9]+)?$"
+                              placeholder="1272-5040"
+                            />
+                            <div class="invalid-feedback">
+                              Please enter a value between 1272 and 5040 Wm⁻².
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                      <button
+                        type="submit"
+                        class="btn btn-primary btn-lg"
+                        id="predict-btn"
+                      >
+                        <span
+                          class="spinner-border spinner-border-sm d-none"
+                          id="loading-spinner"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        Predict Performance
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Results Card -->
+              {% if pred %}
+              <div class="card shadow mt-4">
+                <div class="card-header bg-success text-white">
+                  <h3 class="mb-0">Prediction Results</h3>
+                </div>
+                <div class="card-body">
+                  <div class="result-container p-3">
+                    <!-- Only show raw message if result object not available -->
+                    {% if not result %}
+                    <p class="fs-5">{{ pred }}</p>
+                    {% else %}
+                    <!-- Structured Display of Results -->
+                    <div class="row mb-4">
+                      <div class="col-12">
+                        <h4 class="text-muted mb-3">Input Parameters</h4>
+                        <div class="table-responsive">
+                          <table class="table table-bordered">
+                            <thead class="bg-light">
+                              <tr>
+                                <th>Parameter</th>
+                                <th>Value</th>
+                                <th>Unit</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Height of Cathode Channel</td>
+                                <td>{{ result.inputs.HCC }}</td>
+                                <td>mm</td>
+                              </tr>
+                              <tr>
+                                <td>Width of Cathode Channel</td>
+                                <td>{{ result.inputs.WCC }}</td>
+                                <td>mm</td>
+                              </tr>
+                              <tr>
+                                <td>Length of Cathode Channel</td>
+                                <td>{{ result.inputs.LCC }}</td>
+                                <td>mm</td>
+                              </tr>
+                              <tr>
+                                <td>Ambient Temperature</td>
+                                <td>{{ result.inputs.Tamb }}</td>
+                                <td>°C</td>
+                              </tr>
+                              <tr>
+                                <td>Airflow Velocity</td>
+                                <td>{{ result.inputs.Uin }}</td>
+                                <td>ms⁻¹</td>
+                              </tr>
+                              <tr>
+                                <td>Heat Generation</td>
+                                <td>{{ result.inputs.Q }}</td>
+                                <td>Wm⁻²</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row mt-4">
+                      <div class="col-md-6">
+                        <div class="card h-100">
+                          <div class="card-body text-center">
+                            <h4 class="card-title">Pressure Drop</h4>
+                            <p
+                              class="display-5 text-primary"
+                              id="pressure-result"
+                            >
+                              {% if result %} {{
+                              "%.2f"|format(result.predictions.pressure_drop) }}
+                              {% else %} {{ pred.split('|')[1].split(':')[1] if
+                              '|' in pred else 'N/A' }} {% endif %}
+                            </p>
+                            <p class="text-muted">Pa</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="card h-100">
+                          <div class="card-body text-center">
+                            <h4 class="card-title">Stack Temperature</h4>
+                            <p
+                              class="display-5 text-danger"
+                              id="temperature-result"
+                            >
+                              {% if result %} {{
+                              "%.2f"|format(result.predictions.stack_temperature)
+                              }} {% else %} {{ pred.split('|')[2].split(':')[1]
+                              if '|' in pred and pred.split('|')|length > 2 else
+                              'N/A' }} {% endif %}
+                            </p>
+                            <p class="text-muted">°C</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Visualization Section -->
+      <section class="py-5 bg-light" id="visualization">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-10">
+              <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                  <h2 class="mb-0">Generate Visualization</h2>
+                </div>
+                <div class="card-body">
+                  <form id="plot-form" class="row g-3">
+                    <!-- Plot Type Selection -->
+                    <div class="col-md-4">
+                      <div class="form-group mb-3">
+                        <label for="plotType" class="form-label"
+                          >Plot Type</label
+                        >
+                        <select class="form-select" id="plotType" required>
+                          <option value="" disabled selected>
+                            Choose plot type
+                          </option>
+                          <option value="2d">2D Plot</option>
+                          <option value="3d">3D Plot</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Output Variable Selection -->
+                    <div class="col-md-4">
+                      <div class="form-group mb-3">
+                        <label for="outputVariable" class="form-label"
+                          >Output Variable</label
+                        >
+                        <select
+                          class="form-select"
+                          id="outputVariable"
+                          required
+                        >
+                          <option value="" disabled selected>
+                            Choose output variable
+                          </option>
+                          <option value="pressure_drop">Pressure Drop</option>
+                          <option value="stack_temperature">
+                            Stack Temperature
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Variable 1 Selection -->
+                    <div class="col-md-4">
+                      <div class="form-group mb-3">
+                        <label for="var1" class="form-label"
+                          >X-Axis Variable</label
+                        >
+                        <select class="form-select" id="var1" required>
+                          <option value="" disabled selected>
+                            Choose Variable 1
+                          </option>
+                          <option value="HCC">
+                            Height of Cathode Channel (HCC)
+                          </option>
+                          <option value="WCC">
+                            Width of Cathode Channel (WCC)
+                          </option>
+                          <option value="LCC">
+                            Length of Cathode Channel (LCC)
+                          </option>
+                          <option value="Tamb">
+                            Ambient Temperature (Tamb)
+                          </option>
+                          <option value="Uin">Airflow Velocity (Uin)</option>
+                          <option value="Q">Heat Generation (Q)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Variable 2 Selection (for 3D plots) -->
+                    <div class="col-md-4 d-none" id="var2-container">
+                      <div class="form-group mb-3">
+                        <label for="var2" class="form-label"
+                          >Y-Axis Variable</label
+                        >
+                        <select class="form-select" id="var2">
+                          <option value="" disabled selected>
+                            Choose Variable 2
+                          </option>
+                          <option value="HCC">
+                            Height of Cathode Channel (HCC)
+                          </option>
+                          <option value="WCC">
+                            Width of Cathode Channel (WCC)
+                          </option>
+                          <option value="LCC">
+                            Length of Cathode Channel (LCC)
+                          </option>
+                          <option value="Tamb">
+                            Ambient Temperature (Tamb)
+                          </option>
+                          <option value="Uin">Airflow Velocity (Uin)</option>
+                          <option value="Q">Heat Generation (Q)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Fixed Variables Container -->
+                    <div class="row mt-3" id="fixed-variables-container">
+                      <h5 class="mb-3">Fixed Parameters</h5>
+                      <!-- HCC -->
+                      <div
+                        class="col-md-4 fixed-variable d-none"
+                        id="fixed-HCC"
+                      >
+                        <div class="form-group mb-3">
+                          <label for="fixedHCC" class="form-label"
+                            >Height of Cathode Channel (mm)</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="fixedHCC"
+                            value="1.5"
+                          />
+                        </div>
+                      </div>
+                      <!-- WCC -->
+                      <div
+                        class="col-md-4 fixed-variable d-none"
+                        id="fixed-WCC"
+                      >
+                        <div class="form-group mb-3">
+                          <label for="fixedWCC" class="form-label"
+                            >Width of Cathode Channel (mm)</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="fixedWCC"
+                            value="1.0"
+                          />
+                        </div>
+                      </div>
+                      <!-- LCC -->
+                      <div
+                        class="col-md-4 fixed-variable d-none"
+                        id="fixed-LCC"
+                      >
+                        <div class="form-group mb-3">
+                          <label for="fixedLCC" class="form-label"
+                            >Length of Cathode Channel (mm)</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="fixedLCC"
+                            value="60"
+                          />
+                        </div>
+                      </div>
+                      <!-- Tamb -->
+                      <div
+                        class="col-md-4 fixed-variable d-none"
+                        id="fixed-Tamb"
+                      >
+                        <div class="form-group mb-3">
+                          <label for="fixedTamb" class="form-label"
+                            >Ambient Temperature (°C)</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="fixedTamb"
+                            value="25"
+                          />
+                        </div>
+                      </div>
+                      <!-- Uin -->
+                      <div
+                        class="col-md-4 fixed-variable d-none"
+                        id="fixed-Uin"
+                      >
+                        <div class="form-group mb-3">
+                          <label for="fixedUin" class="form-label"
+                            >Airflow Velocity (ms⁻¹)</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="fixedUin"
+                            value="5"
+                          />
+                        </div>
+                      </div>
+                      <!-- Q -->
+                      <div class="col-md-4 fixed-variable d-none" id="fixed-Q">
+                        <div class="form-group mb-3">
+                          <label for="fixedQ" class="form-label"
+                            >Heat Generation (Wm⁻²)</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="fixedQ"
+                            value="3000"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                      <button
+                        type="button"
+                        class="btn btn-primary btn-lg"
+                        id="generate-plot-btn"
+                        onclick="generatePlot()"
+                      >
+                        <span
+                          class="spinner-border spinner-border-sm d-none"
+                          id="plot-loading-spinner"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        Generate Visualization
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Plot Display -->
+              <div class="card shadow mt-4">
+                <div class="card-header bg-primary text-white">
+                  <h3 class="mb-0">Visualization Results</h3>
+                </div>
+                <div class="card-body">
+                  <div
+                    id="plot-container"
+                    class="d-flex justify-content-center"
+                  >
+                    <div
+                      id="plot"
+                      class="w-100"
+                      style="min-height: 500px"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section class="py-5" id="about">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-10">
+              <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                  <h2 class="mb-0">About This Project</h2>
+                </div>
+                <div class="card-body">
+                  <h5>Fuel Cell Performance Prediction</h5>
+                  <p class="lead">
+                    This tool provides predictions for PEM fuel cell performance
+                    metrics based on physical parameters.
+                  </p>
+                  <p>
+                    The predictions are generated using two neural network
+                    models:
+                  </p>
+                  <ul>
+                    <li>
+                      <strong>DelpNN</strong>: Predicts pressure drop across the
+                      fuel cell
+                    </li>
+                    <li><strong>TstaNN</strong>: Predicts stack temperature</li>
+                  </ul>
+                  <p>
+                    Users can input six key parameters to generate predictions
+                    or create visualizations to understand how changes in these
+                    parameters affect fuel cell performance.
+                  </p>
+
+                  <h5 class="mt-4">Input Parameters:</h5>
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Parameter</th>
+                          <th>Description</th>
+                          <th>Range</th>
+                          <th>Unit</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>HCC</td>
+                          <td>Height of Cathode Channel</td>
+                          <td>1.0 - 2.0</td>
+                          <td>mm</td>
+                        </tr>
+                        <tr>
+                          <td>WCC</td>
+                          <td>Width of Cathode Channel</td>
+                          <td>0.5 - 1.5</td>
+                          <td>mm</td>
+                        </tr>
+                        <tr>
+                          <td>LCC</td>
+                          <td>Length of Cathode Channel</td>
+                          <td>30 - 90</td>
+                          <td>mm</td>
+                        </tr>
+                        <tr>
+                          <td>Tamb</td>
+                          <td>Ambient Temperature</td>
+                          <td>-20 - 40</td>
+                          <td>°C</td>
+                        </tr>
+                        <tr>
+                          <td>Uin</td>
+                          <td>Airflow Velocity</td>
+                          <td>1 - 10</td>
+                          <td>ms⁻¹</td>
+                        </tr>
+                        <tr>
+                          <td>Q</td>
+                          <td>Heat Generation</td>
+                          <td>1272 - 5040</td>
+                          <td>Wm⁻²</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark text-white">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6">
+            <h4>Fuel Cell Predictor</h4>
+            <p>
+              A tool for predicting PEMFC performance metrics based on physical
+              parameters.
+            </p>
+          </div>
+          <div class="col-lg-3">
+            <h5>Navigation</h5>
+            <ul class="list-unstyled">
+              <li><a href="#prediction" class="text-white">Prediction</a></li>
+              <li>
+                <a href="#visualization" class="text-white">Visualization</a>
+              </li>
+              <li><a href="#about" class="text-white">About</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3">
+            <h5>Connect</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="https://www.linkedin.com/in/lee-hanhee/" class="text-white"
+                  ><i class="bi bi-linkedin me-2"></i>LinkedIn</a
+                >
+              </li>
+              <li>
+                <a href="https://github.com/lee-hanhee" class="text-white"
+                  ><i class="bi bi-github me-2"></i>GitHub</a
+                >
+              </li>
+              <li>
+                <a href="mailto:hanheeeng.lee@mail.utoronto.ca" class="text-white"
+                  ><i class="bi bi-envelope-fill me-2"></i>Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col text-center">
+            <p class="mb-0">© 2024 Fuel Cell Predictor | Made by Hanhee</p>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
+    </footer>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- Custom JS -->
-  <script src="{{ url_for('static', filename='js/plot.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/predictions.js') }}"></script>
-</body>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/plot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/predictions.js') }}"></script>
+  </body>
 </html>

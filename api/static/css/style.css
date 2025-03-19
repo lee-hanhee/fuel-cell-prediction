@@ -198,6 +198,37 @@ body[data-bs-theme="dark"] .table td {
   border-radius: 8px;
 }
 
+.table-bordered {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: rgba(var(--bs-primary-rgb), 0.1);
+}
+
+body[data-bs-theme="dark"] .table thead {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.result-container .card {
+  transition: transform 0.2s ease;
+}
+
+.result-container .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+body[data-bs-theme="dark"] .result-container .card:hover {
+  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.05);
+}
+
+.result-container .display-5 {
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
 /* Plot Container */
 #plot-container {
   width: 100%;
@@ -250,9 +281,7 @@ body[data-bs-theme="dark"] .table td {
 }
 
 .bg-logo {
-  background: url({{ url_for('static' filename = '/static/forest_conserv.png')
-}
-});
+  background: url({{url_for("static" filename = "/static/forest_conserv.png")}});
   background-size: 100% 100%;
   height: 300px;
   background-size: cover;
