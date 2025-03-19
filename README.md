@@ -22,7 +22,7 @@ This web application provides a user-friendly interface to predict PEMFC (Proton
 ## Live Demo
 
 The application is deployed and available at:
-https://fuel-cell-prediction-la3f7boq2-hanhees-projects.vercel.app
+https://fuel-cell-prediction.vercel.app/
 
 **Note**: The deployed version uses simplified models for predictions due to Vercel serverless function size limitations. For full model accuracy, please run the application locally as described below.
 
