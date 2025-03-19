@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error - Fuel Cell Predictor</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+              <h2 class="mb-0">An Error Occurred</h2>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-danger">
+                <h4>Error Details:</h4>
+                <p>{{ error }}</p>
+              </div>
+
+              {% if traceback %}
+              <h5 class="mt-4">Technical Details:</h5>
+              <div class="bg-dark text-light p-3 rounded">
+                <pre>{{ traceback }}</pre>
+              </div>
+              {% endif %}
+
+              <div class="mt-4">
+                <a href="/" class="btn btn-primary">Return to Home</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-4 shadow">
+            <div class="card-body">
+              <h5>Possible Solutions:</h5>
+              <ul>
+                <li>Try refreshing the page</li>
+                <li>Clear your browser cache</li>
+                <li>Try again in a few minutes</li>
+                <li>
+                  For full model functionality, consider running the application
+                  locally
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

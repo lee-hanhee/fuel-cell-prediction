@@ -2,9 +2,12 @@ from flask import Flask, request, render_template, jsonify
 import numpy as np
 import os
 import json
+import datetime
 
-# Create a Flask application instance
-app = Flask(__name__)
+# Create a Flask application instance with explicit template and static folder paths
+app = Flask(__name__,
+            template_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates'),
+            static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static'))
 
 # Define a dummy prediction function for Vercel
 def dummy_predict(features):
@@ -80,10 +83,27 @@ def predict():
 def plot():
     try:
         data = request.json
+        if not data:
+            return jsonify(success=False, error="No data received in request")
+            
+        # Validate required fields
+        required_fields = ['plotType', 'outputVariable', 'var1']
+        for field in required_fields:
+            if field not in data:
+                return jsonify(success=False, error=f"Missing required field: {field}")
+                
         plot_type = data['plotType']
         output_variable = data['outputVariable']
         var1 = data['var1']
         var2 = data.get('var2')
+        
+        # Validate plot types
+        if plot_type not in ['2d', '3d']:
+            return jsonify(success=False, error=f"Invalid plot type: {plot_type}")
+            
+        # Check if var2 is provided for 3D plots
+        if plot_type == '3d' and not var2:
+            return jsonify(success=False, error="3D plots require a second variable")
 
         bounds = {
             'HCC': (1, 2),  # mm
@@ -93,7 +113,13 @@ def plot():
             'Uin': (1, 10),  # m/s
             'Q': (1272, 5040)  # W/m²
         }
-
+        
+        # Validate variables against known bounds
+        if var1 not in bounds:
+            return jsonify(success=False, error=f"Unknown variable: {var1}")
+        if var2 and var2 not in bounds:
+            return jsonify(success=False, error=f"Unknown variable: {var2}")
+            
         var1_values = np.linspace(bounds[var1][0], bounds[var1][1], 50)  # Reduced sample size
         var2_values = np.linspace(bounds[var2][0], bounds[var2][1], 10) if var2 else [0]  # Reduced sample size
 
@@ -151,5 +177,56 @@ def plot():
         print("Error generating plot:", e)
         return jsonify(success=False, error=str(e))
 
+# Add a health check route
+@app.route('/health')
+def health_check():
+    return jsonify({
+        "status": "ok",
+        "version": "1.0.0",
+        "message": "Fuel Cell Predictor API is running",
+        "serverTime": str(datetime.datetime.now()),
+        "mode": "simplified (Vercel deployment)"
+    })
+
+# Add basic diagnostic route
+@app.route('/debug')
+def debug_info():
+    import sys
+    import os
+    import flask
+    
+    # Gather diagnostic information
+    info = {
+        "python_version": sys.version,
+        "flask_version": flask.__version__,
+        "environment": os.environ.get("VERCEL_ENV", "unknown"),
+        "region": os.environ.get("VERCEL_REGION", "unknown"),
+        "paths": {
+            "app_directory": os.path.dirname(os.path.abspath(__file__)),
+            "working_directory": os.getcwd(),
+            "template_folder": app.template_folder,
+            "static_folder": app.static_folder
+        },
+        "templates_exist": os.path.exists(app.template_folder),
+        "templates_files": os.listdir(app.template_folder) if os.path.exists(app.template_folder) else [],
+        "static_exists": os.path.exists(app.static_folder),
+        "static_subdirs": os.listdir(app.static_folder) if os.path.exists(app.static_folder) else []
+    }
+    
+    return jsonify(info)
+
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)
+    
+# Add an error handler route for debugging
+@app.errorhandler(500)
+def internal_error(error):
+    import traceback
+    error_traceback = traceback.format_exc()
+    app.logger.error(f"500 error: {error}\n{error_traceback}")
+    return render_template('error.html', error=str(error), traceback=error_traceback), 500
+
+@app.errorhandler(404)
+def not_found_error(error):
+    app.logger.error(f"404 error: {error}")
+    return render_template('error.html', error=str(error), traceback=None), 404 

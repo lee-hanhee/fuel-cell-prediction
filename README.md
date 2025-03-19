@@ -1,124 +1,157 @@
 # Fuel Cell Prediction Web Application
 
-A web application for predicting fuel cell performance metrics (pressure drop and stack temperature) based on input parameters like channel dimensions, ambient temperature, airflow velocity, and heat generation.
+## About
+
+This web application provides a user-friendly interface to predict PEMFC (Proton Exchange Membrane Fuel Cell) performance metrics based on physical parameters. It utilizes machine learning models to predict pressure drop and stack temperature.
 
 ## Features
 
-- Modern responsive UI with Bootstrap 5
-- Interactive form with sliders for parameter input
-- Real-time validation feedback
-- Dark/light mode toggle
-- Visualization options (2D and 3D plots)
-- Detailed result display with gauge charts
+- Input validation with sliders and text inputs
+- Responsive design with Bootstrap 5
+- Light/dark mode toggle
+- Dynamic visualization generation
+- Detailed results display
 
 ## Tech Stack
 
-- **Backend**: Flask Python web framework
 - **Frontend**: HTML, CSS, JavaScript, Bootstrap 5
-- **Visualizations**: Chart.js, Plotly.js
-- **Machine Learning**: PyTorch, Scikit-learn
-- **Deployment**: Vercel (serverless)
+- **Backend**: Python Flask
+- **ML Models**: PyTorch neural networks
+- **Visualization**: Plotly.js
 
-## Running Locally
+## Live Demo
 
-1. Install dependencies:
+The application is deployed and available at:
+https://fuel-cell-prediction-la3f7boq2-hanhees-projects.vercel.app
 
-   ```
-   pip install -r requirements.txt
-   ```
+**Note**: The deployed version uses simplified models for predictions due to Vercel serverless function size limitations. For full model accuracy, please run the application locally as described below.
 
-2. Run the Flask development server:
+## Local Development
 
-   ```
-   export FLASK_APP=app.py
-   export FLASK_ENV=development
-   flask run
-   ```
+To run this application locally:
 
-3. Open your browser and navigate to:
-   ```
-   http://127.0.0.1:5000
-   ```
+1. Clone the repository:
 
-## Deploying to Vercel
+```bash
+git clone https://github.com/your-username/fuel-cell-prediction.git
+cd fuel-cell-prediction
+```
 
-### Prerequisites
+2. Install the dependencies:
 
-1. [Vercel CLI](https://vercel.com/docs/cli) installed
-2. A Vercel account
-3. Git repository with your code
+```bash
+pip install -r requirements.txt
+```
 
-### Steps for Deployment
+3. Run the Flask application:
 
-1. Install the Vercel CLI:
+```bash
+export FLASK_APP=app.py
+export FLASK_ENV=development
+flask run
+```
 
-   ```
-   npm i -g vercel
-   ```
+4. Access the application at `http://127.0.0.1:5000`
 
-2. Log in to Vercel:
+## Deployment
 
-   ```
-   vercel login
-   ```
+### Vercel Deployment
+
+This application is configured for deployment on Vercel as a serverless application:
+
+1. Install Vercel CLI:
+
+```bash
+npm install -g vercel
+```
+
+2. Login to Vercel:
+
+```bash
+vercel login
+```
 
 3. Deploy the application:
 
-   ```
-   vercel
-   ```
+```bash
+vercel
+```
 
-4. During deployment configuration:
+4. Deploy to production:
 
-   - Set the output directory to `./`
-   - Set the development command to `flask run`
-   - Select the Python runtime
+```bash
+vercel --prod
+```
 
-5. For production deployment after testing:
-   ```
-   vercel --prod
-   ```
+### Limitations of Vercel Deployment
 
-### Alternative: Deploy from the Vercel Dashboard
+Due to Vercel's serverless function size limitations (50MB uncompressed), the deployed version uses a simplified mathematical model instead of the actual neural network models. This simplification was necessary to reduce the deployment package size while still providing a functional demo.
 
-1. Push your code to GitHub
-2. Connect your repository in the Vercel dashboard
-3. Configure the settings:
+For full model accuracy and performance, it's recommended to run the application locally where the complete models can be loaded.
 
-   - Framework preset: Other
-   - Build command: None (or `pip install -r requirements-vercel.txt`)
-   - Output directory: ./
-   - Install command: `pip install -r requirements-vercel.txt`
+### Troubleshooting Vercel Deployment
 
-4. Deploy and monitor build logs
+If you encounter issues with the Vercel deployment, try these solutions:
+
+1. **500 Internal Server Error**:
+
+   - Try accessing the `/health` or `/debug` endpoints to check if the server is running
+   - Clear your browser cache and cookies
+   - The application may be restarting or experiencing temporary issues
+
+2. **Missing Static Files**:
+
+   - If styles or JavaScript are not loading, try hard-refreshing your browser (Ctrl+F5 or Cmd+Shift+R)
+   - Vercel's serverless deployments can sometimes have issues with static files
+
+3. **Slow First Request**:
+
+   - Vercel serverless functions might take a few seconds to "cold start" if they haven't been used recently
+   - Subsequent requests should be faster
+
+4. **Memory Limits**:
+   - Vercel has memory limits for serverless functions
+   - For this reason, we use simplified prediction models instead of full machine learning models in the deployed version
+
+### Checking Server Status
+
+- Access `/health` endpoint to verify the API is running
+- Access `/debug` endpoint to get detailed diagnostic information
+
+### Running Locally for Full Functionality
+
+Remember that the Vercel deployment uses simplified predictive models. For full machine learning model functionality, run the application locally using the instructions in the "Local Development" section.
 
 ## Project Structure
 
-```
-/
-├── api/                  # Vercel serverless function directory
-│   ├── index.py          # Vercel entry point
-│   ├── app.py            # Adapted Flask app
-│   ├── static/           # Static files copy
-│   └── templates/        # Templates copy
-├── models/               # ML model files
-├── static/               # Static assets
-│   ├── css/              # CSS stylesheets
-│   └── js/               # JavaScript files
-├── templates/            # HTML templates
-├── app.py                # Main Flask application
-├── requirements.txt      # Full development dependencies
-├── requirements-vercel.txt  # Minimal dependencies for Vercel
-└── vercel.json           # Vercel configuration
-```
+- `app.py`: Main Flask application
+- `api/`: Files for Vercel serverless deployment
+- `templates/`: HTML templates
+- `static/`: CSS, JavaScript, and other static files
+- `models/`: Neural network models
 
-## Troubleshooting Vercel Deployment
+## Machine Learning Models
 
-- Check if requirements-vercel.txt has the minimal necessary dependencies
-- Ensure the models directory is included in your deployment
-- Check Vercel function logs for any runtime errors
-- Ensure model file paths use the correct directory structure
+The application uses two PyTorch neural network models:
+
+- `DelpNN`: Predicts pressure drop across the fuel cell
+- `TstaNN`: Predicts stack temperature
+
+## Input Parameters
+
+- **HCC**: Height of Cathode Channel (1.0-2.0 mm)
+- **WCC**: Width of Cathode Channel (0.5-1.5 mm)
+- **LCC**: Length of Cathode Channel (30-90 mm)
+- **Tamb**: Ambient Temperature (-20-40 °C)
+- **Uin**: Airflow Velocity (1-10 ms⁻¹)
+- **Q**: Heat Generation (1272-5040 Wm⁻²)
 
 ## License
 
-MIT License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Author
+
+Hanhee Lee
+
+## Troubleshooting
