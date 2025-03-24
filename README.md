@@ -19,6 +19,89 @@ This web application provides a user-friendly interface to predict PEMFC (Proton
 - **ML Models**: PyTorch neural networks
 - **Visualization**: Plotly.js
 
+## Code Structure
+
+```
+├── app.py                 # Main application file
+│   ├── DelpNN             # Neural network model for pressure drop prediction
+│   ├── TstaNN             # Neural network model for stack temperature prediction
+│   ├── home()             # Route handler for the homepage
+│   ├── predict()          # Handles parameter input and model predictions
+│   └── plot()             # Generates 2D/3D visualizations of predictions
+│
+├── api/app.py             # Vercel deployment version
+│   ├── dummy_predict()    # Simplified prediction function for Vercel
+│   ├── home()             # Route handler for Vercel deployment
+│   ├── predict()          # Handles predictions in Vercel environment
+│   ├── plot()             # Generates plots without ML models
+│   ├── health_check()     # API health monitoring endpoint
+│   └── debug_info()       # Diagnostic information endpoint
+│
+├── static/
+│   ├── css/
+│   │   └── style.css      # Main stylesheet with light/dark theme support
+│   │
+│   └── js/
+│       ├── plot.js        # Handles visualization functionality
+│       │   ├── initFormValidation()       # Form validation setup
+│       │   ├── initThemeToggle()          # Light/dark theme switching
+│       │   ├── generatePlot()             # Plot creation and API integration
+│       │   └── applyPlotTheme()           # Theme-aware plot styling
+│       │
+│       └── predictions.js # Handles prediction results
+│           ├── createResultCharts()       # Creates result visualizations
+│           ├── createPressureGauge()      # Pressure drop gauge chart
+│           └── createTemperatureGauge()   # Temperature gauge chart
+│
+├── models/                # Contains trained ML models and scalers
+│   ├── Delp_10.6363.pth   # Pressure drop model weights
+│   ├── Tsta_0.7409.pth    # Stack temperature model weights
+│   ├── 10.6363_6_scaler_X.pkl  # Scaler for pressure drop model
+│   └── 0.7409_6_scaler_X.pkl   # Scaler for temperature model
+│
+└── templates/
+    └── index.html         # Main application template
+```
+
+## Key Function Details
+
+### Backend (Python)
+
+#### Neural Network Models
+
+- **DelpNN**: 5-layer network with dropout for pressure drop prediction
+
+  - Input: 6 parameters (HCC, WCC, LCC, Tamb, Uin, Q)
+  - Output: Pressure drop in Pa
+
+- **TstaNN**: 5-layer network for stack temperature prediction
+  - Input: 6 parameters (HCC, WCC, LCC, Tamb, Uin, Q)
+  - Output: Stack temperature in °C
+
+#### Route Handlers
+
+- **home()**: Serves the main application page
+- **predict()**: Processes form inputs, scales parameters, and runs predictions
+- **plot()**: Handles plot generation based on variable selections
+
+### Frontend (JavaScript)
+
+#### Plot Management (plot.js)
+
+- **initFormValidation()**: Sets up form validation for all interface forms
+- **initThemeToggle()**: Manages theme switching and persistence
+- **connectSlidersWithInputs()**: Links range sliders with numerical inputs
+- **updateFixedVariables()**: Updates fixed variable inputs based on plot variable selections
+- **generatePlot()**: Creates and submits plot requests to the backend
+- **applyPlotTheme()**: Applies current theme styling to plots
+
+#### Prediction Visualization (predictions.js)
+
+- **createResultCharts()**: Creates visualization containers for prediction results
+- **createPressureGauge()**: Creates gauge chart for pressure drop visualization
+- **createTemperatureGauge()**: Creates gauge chart for stack temperature visualization
+- **updateChartsTheme()**: Updates chart themes when site theme changes
+
 ## Live Demo
 
 The application is deployed and available at:
@@ -121,21 +204,6 @@ If you encounter issues with the Vercel deployment, try these solutions:
 ### Running Locally for Full Functionality
 
 Remember that the Vercel deployment uses simplified predictive models. For full machine learning model functionality, run the application locally using the instructions in the "Local Development" section.
-
-## Project Structure
-
-- `app.py`: Main Flask application
-- `api/`: Files for Vercel serverless deployment
-- `templates/`: HTML templates
-- `static/`: CSS, JavaScript, and other static files
-- `models/`: Neural network models
-
-## Machine Learning Models
-
-The application uses two PyTorch neural network models:
-
-- `DelpNN`: Predicts pressure drop across the fuel cell
-- `TstaNN`: Predicts stack temperature
 
 ## Input Parameters
 
