@@ -10,7 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
   initFormHandlers();
 });
 
-// Initialize form validation
+/**
+ * Initializes form validation for all forms with class "needs-validation"
+ * Prevents form submission if validation fails and shows loading spinner when valid
+ */
 function initFormValidation() {
   // Fetch all forms that we want to apply validation to
   const forms = document.querySelectorAll(".needs-validation");
@@ -37,7 +40,10 @@ function initFormValidation() {
   });
 }
 
-// Initialize theme toggle
+/**
+ * Sets up the light/dark theme toggle functionality
+ * Loads saved preference from localStorage and applies it
+ */
 function initThemeToggle() {
   const themeToggleBtn = document.getElementById("theme-toggle");
   const themeIcon = themeToggleBtn.querySelector("i");
@@ -49,32 +55,28 @@ function initThemeToggle() {
     updateThemeIcon(themeIcon, savedTheme);
   }
 
-  // Add event listener to theme toggle button
-  themeToggleBtn.addEventListener("click", function () {
+  // Add event listener to toggle theme
+  themeToggleBtn.addEventListener("click", () => {
     const currentTheme = document.body.getAttribute("data-bs-theme");
     const newTheme = currentTheme === "dark" ? "light" : "dark";
 
-    // Update theme
-    document.body.setAttribute("data-bs-theme", newTheme);
+    // Save theme preference
     localStorage.setItem("theme", newTheme);
-
-    // Update icon
+    document.body.setAttribute("data-bs-theme", newTheme);
     updateThemeIcon(themeIcon, newTheme);
 
-    // Update Plotly theme if there's an existing plot
-    const plotElement = document.getElementById("plot");
-    if (plotElement && plotElement.data) {
+    // Also update plot theme if plot exists
+    if (window.currentPlot) {
       updatePlotTheme(newTheme);
-    }
-
-    // Also update charts if the updateChartsTheme function exists
-    if (typeof updateChartsTheme === "function") {
-      updateChartsTheme(newTheme === "dark");
     }
   });
 }
 
-// Update theme icon
+/**
+ * Updates the theme toggle icon based on current theme
+ * @param {HTMLElement} iconElement - The icon element to update
+ * @param {string} theme - The theme value ('light' or 'dark')
+ */
 function updateThemeIcon(iconElement, theme) {
   if (theme === "dark") {
     iconElement.classList.remove("bi-moon-fill");
@@ -85,284 +87,287 @@ function updateThemeIcon(iconElement, theme) {
   }
 }
 
-// Initialize form event handlers
+/**
+ * Initializes all form-related event handlers for the visualization section
+ */
 function initFormHandlers() {
-  // Add event listeners to plot type select
-  const plotTypeSelect = document.getElementById("plotType");
-  if (plotTypeSelect) {
-    plotTypeSelect.addEventListener("change", function () {
-      const var2Container = document.getElementById("var2-container");
-      if (this.value === "3d") {
-        var2Container.classList.remove("d-none");
-      } else {
-        var2Container.classList.add("d-none");
-      }
+  // Connect visualization form elements
+  const plotForm = document.getElementById("visualization-form");
+  if (plotForm) {
+    const plotTypeRadios = document.querySelectorAll('input[name="plotType"]');
+    const var1Select = document.getElementById("var1");
+    const var2Select = document.getElementById("var2");
+    const var2Group = document.getElementById("var2Group");
+
+    // Handle plot type change
+    plotTypeRadios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        if (radio.value === "3d") {
+          var2Group.classList.remove("d-none");
+        } else {
+          var2Group.classList.add("d-none");
+        }
+      });
     });
-  }
 
-  // Add event listeners to var1 and var2 selects
-  const var1Select = document.getElementById("var1");
-  const var2Select = document.getElementById("var2");
+    // Handle variable 1 change to prevent duplicate selections
+    var1Select.addEventListener("change", () => {
+      updateFixedVariables();
+    });
 
-  if (var1Select) {
-    var1Select.addEventListener("change", updateFixedVariables);
-  }
+    // Handle variable 2 change to prevent duplicate selections
+    var2Select.addEventListener("change", () => {
+      updateFixedVariables();
+    });
 
-  if (var2Select) {
-    var2Select.addEventListener("change", updateFixedVariables);
+    // Submit event for visualization form
+    plotForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      generatePlot();
+    });
   }
 
   // Connect sliders with input fields
   connectSlidersWithInputs();
 }
 
-// Connect range sliders with text inputs
+/**
+ * Connects range sliders with their corresponding text input fields
+ * Sets up two-way binding between slider and input values
+ */
 function connectSlidersWithInputs() {
-  // Main form sliders
-  const sliderIds = ["HCC", "WCC", "LCC", "Tamb", "Uin", "Q"];
+  const sliders = document.querySelectorAll('input[type="range"]');
 
-  sliderIds.forEach((id) => {
-    const slider = document.getElementById(`${id}-slider`);
-    const input = document.getElementById(id);
+  sliders.forEach((slider) => {
+    const inputId = slider.getAttribute("data-input");
+    const input = document.getElementById(inputId);
 
-    if (slider && input) {
-      // Set initial values
-      input.value = slider.value;
+    if (input) {
+      // Set initial value from input to slider
+      slider.value = input.value;
 
       // Update input when slider changes
-      slider.addEventListener("input", function () {
-        input.value = this.value;
+      slider.addEventListener("input", () => {
+        input.value = slider.value;
       });
 
       // Update slider when input changes
-      input.addEventListener("input", function () {
-        const value = parseFloat(this.value);
-        const min = parseFloat(slider.min);
-        const max = parseFloat(slider.max);
-
-        if (!isNaN(value) && value >= min && value <= max) {
-          slider.value = value;
-        }
+      input.addEventListener("input", () => {
+        slider.value = input.value;
       });
     }
   });
 }
 
-// Update fixed variables based on selected variables
+/**
+ * Updates the fixed variables section based on variable selections
+ * Hides the fixed variable inputs for variables selected as var1 or var2
+ */
 function updateFixedVariables() {
   const var1 = document.getElementById("var1").value;
   const var2 = document.getElementById("var2").value;
-  const allVars = ["HCC", "WCC", "LCC", "Tamb", "Uin", "Q"];
+  const plotType = document.querySelector(
+    'input[name="plotType"]:checked'
+  ).value;
 
-  // Hide all fixed variables first
-  allVars.forEach((varName) => {
-    const fixedVarElement = document.getElementById(`fixed-${varName}`);
-    if (fixedVarElement) {
-      fixedVarElement.classList.add("d-none");
-    }
+  // Show all fixed variable groups first
+  const fixedGroups = document.querySelectorAll(".fixed-var-group");
+  fixedGroups.forEach((group) => {
+    group.classList.remove("d-none");
   });
 
-  // Show only the relevant fixed variables
-  allVars.forEach((varName) => {
-    if (varName !== var1 && varName !== var2) {
-      const fixedVarElement = document.getElementById(`fixed-${varName}`);
-      if (fixedVarElement) {
-        fixedVarElement.classList.remove("d-none");
-      }
+  // Hide the selected variables
+  if (var1) {
+    const var1Group = document.getElementById(`fixed-${var1}`);
+    if (var1Group) {
+      var1Group.classList.add("d-none");
     }
-  });
+  }
+
+  if (plotType === "3d" && var2) {
+    const var2Group = document.getElementById(`fixed-${var2}`);
+    if (var2Group) {
+      var2Group.classList.add("d-none");
+    }
+  }
 }
 
-// Generate plot based on form input
+/**
+ * Generates and displays a plot based on form inputs
+ * Sends request to server and renders the returned plot data
+ */
 function generatePlot() {
   // Get form values
-  const plotType = document.getElementById("plotType").value;
-  const outputVariable = document.getElementById("outputVariable").value;
+  const plotType = document.querySelector(
+    'input[name="plotType"]:checked'
+  ).value;
+  const outputVariable = document.querySelector(
+    'input[name="outputVariable"]:checked'
+  ).value;
   const var1 = document.getElementById("var1").value;
   const var2 = document.getElementById("var2").value;
 
   // Validate required fields
-  if (!plotType || !outputVariable || !var1 || (plotType === "3d" && !var2)) {
-    showValidationError("Please select all required fields");
+  if (!var1) {
+    showValidationError("Please select Variable 1");
     return;
   }
 
-  // Get fixed values
+  if (plotType === "3d" && !var2) {
+    showValidationError("Please select Variable 2 for 3D plots");
+    return;
+  }
+
+  if (var1 === var2 && plotType === "3d") {
+    showValidationError("Variables 1 and 2 must be different for 3D plots");
+    return;
+  }
+
+  // Collect fixed values
   const fixedValues = {};
-  const allVars = ["HCC", "WCC", "LCC", "Tamb", "Uin", "Q"];
-
-  allVars.forEach((varName) => {
-    const fixedInput = document.getElementById(`fixed${varName}`);
-    if (fixedInput && varName !== var1 && varName !== var2) {
-      const value = fixedInput.value.trim();
-
-      if (!value) {
-        showValidationError(`Please enter a value for fixed ${varName}`);
-        return;
-      }
-
-      fixedValues[varName] = parseFloat(value);
-    }
+  const fixedInputs = document.querySelectorAll(
+    ".fixed-var-input:not(.d-none)"
+  );
+  fixedInputs.forEach((input) => {
+    const varName = input.getAttribute("data-var");
+    fixedValues[varName] = input.value;
   });
 
-  // Show loading spinner
-  const spinner = document.getElementById("plot-loading-spinner");
-  if (spinner) {
-    spinner.classList.remove("d-none");
-  }
+  // Show loading indicator
+  const plotLoading = document.getElementById("plot-loading");
+  const plotContainer = document.getElementById("plot-container");
+  const plotError = document.getElementById("plot-error");
 
-  // Disable generate button during request
-  const generateBtn = document.getElementById("generate-plot-btn");
-  if (generateBtn) {
-    generateBtn.disabled = true;
-  }
+  plotError.classList.add("d-none");
+  plotLoading.classList.remove("d-none");
+  plotContainer.classList.add("d-none");
 
-  // Prepare data for API request
-  const plotData = {
+  // Prepare data for the request
+  const requestData = {
     plotType: plotType,
     outputVariable: outputVariable,
     var1: var1,
-    var2: plotType === "3d" ? var2 : null,
     fixedValues: fixedValues,
   };
 
-  // Send API request
+  if (plotType === "3d") {
+    requestData.var2 = var2;
+  }
+
+  // Send request to the server
   fetch("/plot", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(plotData),
+    body: JSON.stringify(requestData),
   })
     .then((response) => response.json())
     .then((data) => {
-      // Hide loading spinner
-      if (spinner) {
-        spinner.classList.add("d-none");
-      }
-
-      // Enable generate button
-      if (generateBtn) {
-        generateBtn.disabled = false;
-      }
+      // Hide loading indicator
+      plotLoading.classList.add("d-none");
 
       if (data.success) {
-        const plotContainer = document.getElementById("plot");
-        if (plotContainer) {
-          // Clear previous plot
-          plotContainer.innerHTML = "";
+        // Parse the plot data
+        const plotData = JSON.parse(data.plotData);
 
-          // Parse plot data
-          const plotConfig = JSON.parse(data.plotData);
+        // Apply theme to the plot
+        const theme = document.body.getAttribute("data-bs-theme") || "light";
+        applyPlotTheme(plotData, theme);
 
-          // Apply theme to plot
-          applyPlotTheme(plotConfig);
+        // Create the plot
+        Plotly.newPlot("plot-div", plotData.data, plotData.layout, {
+          responsive: true,
+        });
 
-          // Render plot
-          Plotly.newPlot("plot", plotConfig.data, plotConfig.layout, {
-            responsive: true,
-          });
+        // Store the current plot data for theme updates
+        window.currentPlot = plotData;
 
-          // Scroll to the plot
-          document.getElementById("plot-container").scrollIntoView({
-            behavior: "smooth",
-          });
-        }
+        // Show the plot container
+        plotContainer.classList.remove("d-none");
       } else {
-        showValidationError("Error generating plot: " + data.error);
+        // Show error
+        plotError.textContent = data.error || "Error generating plot";
+        plotError.classList.remove("d-none");
       }
     })
     .catch((error) => {
-      // Hide loading spinner
-      if (spinner) {
-        spinner.classList.add("d-none");
-      }
-
-      // Enable generate button
-      if (generateBtn) {
-        generateBtn.disabled = false;
-      }
-
-      showValidationError("Error generating plot: " + error);
-      console.error("Error:", error);
+      // Hide loading indicator and show error
+      plotLoading.classList.add("d-none");
+      plotError.textContent = "Error: " + error.message;
+      plotError.classList.remove("d-none");
     });
 }
 
-// Apply theme to plot based on current site theme
-function applyPlotTheme(plotConfig) {
-  const currentTheme = document.body.getAttribute("data-bs-theme");
+/**
+ * Applies theme-specific styling to plot configuration
+ * @param {Object} plotConfig - The plot configuration object
+ * @param {string} theme - The theme to apply ('light' or 'dark')
+ */
+function applyPlotTheme(plotConfig, theme) {
+  // Default colors
+  const textColor = theme === "dark" ? "#fff" : "#333";
+  const gridColor =
+    theme === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
+  const paperBgColor = theme === "dark" ? "#212529" : "#fff";
+  const plotBgColor = theme === "dark" ? "#212529" : "#fff";
 
-  if (currentTheme === "dark") {
-    // Apply dark theme to plot
-    if (plotConfig.layout) {
-      plotConfig.layout.paper_bgcolor = "#2d2d2d";
-      plotConfig.layout.plot_bgcolor = "#1e1e1e";
-      plotConfig.layout.font = {
-        color: "#ffffff",
-      };
+  // Apply to layout
+  if (plotConfig.layout) {
+    // Set font color
+    plotConfig.layout.font = {
+      color: textColor,
+    };
 
-      // Update axis colors
-      if (plotConfig.layout.xaxis) {
-        plotConfig.layout.xaxis.gridcolor = "#444";
-        plotConfig.layout.xaxis.linecolor = "#555";
-      }
+    // Set background colors
+    plotConfig.layout.paper_bgcolor = paperBgColor;
+    plotConfig.layout.plot_bgcolor = plotBgColor;
 
-      if (plotConfig.layout.yaxis) {
-        plotConfig.layout.yaxis.gridcolor = "#444";
-        plotConfig.layout.yaxis.linecolor = "#555";
-      }
+    // Style 2D axes
+    if (plotConfig.layout.xaxis) {
+      plotConfig.layout.xaxis.gridcolor = gridColor;
+      plotConfig.layout.xaxis.linecolor = textColor;
+    }
 
-      if (plotConfig.layout.scene) {
-        if (plotConfig.layout.scene.xaxis) {
-          plotConfig.layout.scene.xaxis.gridcolor = "#444";
-          plotConfig.layout.scene.xaxis.linecolor = "#555";
+    if (plotConfig.layout.yaxis) {
+      plotConfig.layout.yaxis.gridcolor = gridColor;
+      plotConfig.layout.yaxis.linecolor = textColor;
+    }
+
+    // Style 3D axes
+    if (plotConfig.layout.scene) {
+      ["xaxis", "yaxis", "zaxis"].forEach((axis) => {
+        if (plotConfig.layout.scene[axis]) {
+          plotConfig.layout.scene[axis].gridcolor = gridColor;
+          plotConfig.layout.scene[axis].linecolor = textColor;
         }
-
-        if (plotConfig.layout.scene.yaxis) {
-          plotConfig.layout.scene.yaxis.gridcolor = "#444";
-          plotConfig.layout.scene.yaxis.linecolor = "#555";
-        }
-
-        if (plotConfig.layout.scene.zaxis) {
-          plotConfig.layout.scene.zaxis.gridcolor = "#444";
-          plotConfig.layout.scene.zaxis.linecolor = "#555";
-        }
-      }
+      });
     }
   }
 }
 
-// Update existing plot to match theme
+/**
+ * Updates the theme of the current plot
+ * @param {string} theme - The theme to apply ('light' or 'dark')
+ */
 function updatePlotTheme(theme) {
-  const plotElement = document.getElementById("plot");
-  if (plotElement && plotElement.data) {
-    const update = {};
+  if (!window.currentPlot) return;
 
-    if (theme === "dark") {
-      update.layout = {
-        paper_bgcolor: "#2d2d2d",
-        plot_bgcolor: "#1e1e1e",
-        font: { color: "#ffffff" },
-        xaxis: { gridcolor: "#444", linecolor: "#555" },
-        yaxis: { gridcolor: "#444", linecolor: "#555" },
-      };
-    } else {
-      update.layout = {
-        paper_bgcolor: "#ffffff",
-        plot_bgcolor: "#ffffff",
-        font: { color: "#000000" },
-        xaxis: { gridcolor: "#eee", linecolor: "#ccc" },
-        yaxis: { gridcolor: "#eee", linecolor: "#ccc" },
-      };
-    }
+  // Apply theme to the stored plot data
+  applyPlotTheme(window.currentPlot, theme);
 
-    Plotly.update("plot", {}, update.layout);
-  }
+  // Update the plot
+  Plotly.react("plot-div", window.currentPlot.data, window.currentPlot.layout, {
+    responsive: true,
+  });
 }
 
-// Show validation error
+/**
+ * Shows a validation error message
+ * @param {string} message - The error message to display
+ */
 function showValidationError(message) {
-  // Use Bootstrap's toast or alert for showing errors
-  // For simplicity, we'll use alert for now
-  alert(message);
+  const errorAlert = document.getElementById("plot-error");
+  errorAlert.textContent = message;
+  errorAlert.classList.remove("d-none");
 }

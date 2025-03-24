@@ -9,6 +9,10 @@ import plotly.io as pio
 
 # Define the DelpNN neural network class
 class DelpNN(nn.Module):
+    """
+    Neural network model for predicting pressure drop in PEM fuel cells.
+    Uses a 5-layer architecture with ReLU activation and dropout regularization.
+    """
     def __init__(self):
         super(DelpNN, self).__init__()  # Initialize the superclass
         # Define the layers of the neural network
@@ -21,6 +25,10 @@ class DelpNN(nn.Module):
         self.dropout = nn.Dropout(p=0.5)  # Dropout layer with a dropout probability of 0.5
 
     def forward(self, x):
+        """
+        Forward pass through the network.
+        Applies layers sequentially with ReLU activations and dropout between them.
+        """
         x = self.relu(self.fc1(x))  # Pass input through the first layer and apply ReLU activation
         x = self.dropout(x)  # Apply dropout
         x = self.relu(self.fc2(x))  # Pass through the second layer and apply ReLU activation
@@ -34,6 +42,10 @@ class DelpNN(nn.Module):
 
 # Define the TstaNN neural network class
 class TstaNN(nn.Module):
+    """
+    Neural network model for predicting stack temperature in PEM fuel cells.
+    Uses a 5-layer architecture with ReLU activation but no dropout.
+    """
     def __init__(self):
         super(TstaNN, self).__init__()
         self.fc1 = nn.Linear(6, 256)
@@ -44,6 +56,10 @@ class TstaNN(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
+        """
+        Forward pass through the network.
+        Applies layers sequentially with ReLU activations.
+        """
         x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
         x = self.relu(self.fc3(x))
@@ -78,11 +94,20 @@ Tsta_scaler_X = joblib.load(Tsta_scaler_X_path)
 
 @app.route('/')
 def home():
+    """
+    Main route handler that serves the application's homepage.
+    Returns the rendered index.html template.
+    """
     # Serve the main page
     return render_template("index.html")  
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    """
+    Handles prediction requests from the form submission.
+    Processes input parameters, runs them through the ML models,
+    and returns predictions for pressure drop and stack temperature.
+    """
     if request.method == 'POST':
         try:
             # Extract features from the form input and convert them to float
@@ -152,6 +177,11 @@ def predict():
 
 @app.route('/plot', methods=['POST'])
 def plot():
+    """
+    Generates interactive plots based on user-selected parameters.
+    Creates either 2D line plots or 3D surface plots showing the relationship
+    between input variables and prediction outputs.
+    """
     try:
         data = request.json
         plot_type = data['plotType']

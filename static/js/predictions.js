@@ -1,3 +1,8 @@
+/**
+ * Handles prediction results display and visualization
+ * Initializes result charts and manages prediction form submissions
+ */
+
 // Document ready function
 document.addEventListener("DOMContentLoaded", function () {
   // Check if prediction results exist
@@ -27,7 +32,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// Create charts for prediction results
+/**
+ * Creates gauge charts to visualize the prediction results
+ * Displays pressure drop and temperature values as gauge charts
+ */
 function createResultCharts() {
   // Get the pressure value from the result display
   const pressureElement = document.getElementById("pressure-result");
@@ -53,111 +61,116 @@ function createResultCharts() {
   temperatureChartContainer.style.height = "150px";
   temperatureElement.parentNode.appendChild(temperatureChartContainer);
 
-  // Create canvas elements
-  const pressureCanvas = document.createElement("canvas");
-  pressureCanvas.id = "pressure-chart";
-  pressureChartContainer.appendChild(pressureCanvas);
-
-  const temperatureCanvas = document.createElement("canvas");
-  temperatureCanvas.id = "temperature-chart";
-  temperatureChartContainer.appendChild(temperatureCanvas);
-
-  // Create gauge chart for pressure
-  createGaugeChart(
-    pressureCanvas,
-    "Pressure Drop (Pa)",
-    pressureValue,
-    0,
-    100,
-    "#0d6efd"
-  );
-
-  // Create gauge chart for temperature
-  createGaugeChart(
-    temperatureCanvas,
-    "Stack Temperature (°C)",
-    temperatureValue,
-    0,
-    100,
-    "#dc3545"
-  );
+  // Create gauge charts
+  createPressureGauge(pressureChartContainer, pressureValue);
+  createTemperatureGauge(temperatureChartContainer, temperatureValue);
 }
 
-// Create a gauge chart
-function createGaugeChart(canvas, label, value, min, max, color) {
-  // Calculate percentage for the gauge
-  const percent = ((value - min) / (max - min)) * 100;
+/**
+ * Creates a gauge chart for pressure drop visualization
+ * @param {HTMLElement} container - The container element for the chart
+ * @param {number} value - The pressure drop value to display
+ */
+function createPressureGauge(container, value) {
+  // Determine the max value for the gauge scale
+  const maxValue = Math.max(500, Math.ceil((value * 1.5) / 100) * 100);
 
-  // Create chart
-  new Chart(canvas, {
-    type: "doughnut",
-    data: {
-      datasets: [
-        {
-          data: [percent, 100 - percent],
-          backgroundColor: [color, "#e9ecef"],
-          borderWidth: 0,
-        },
-      ],
-    },
-    options: {
-      cutout: "70%",
-      circumference: 180,
-      rotation: -90,
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: {
-        animateRotate: true,
-        animateScale: true,
-      },
-      plugins: {
-        tooltip: {
-          enabled: false,
-        },
-        legend: {
-          display: false,
-        },
-        title: {
-          display: true,
-          text: value.toFixed(2),
-          position: "bottom",
-          font: {
-            size: 18,
-            weight: "bold",
-          },
-        },
-        subtitle: {
-          display: true,
-          text: label,
-          position: "bottom",
-          font: {
-            size: 14,
-          },
+  // Create the gauge chart using Plotly
+  const data = [
+    {
+      type: "indicator",
+      mode: "gauge+number",
+      value: value,
+      number: { suffix: " Pa", font: { size: 24 } },
+      gauge: {
+        axis: { range: [null, maxValue], tickwidth: 1 },
+        bar: { color: "#1565C0" },
+        bgcolor: "white",
+        borderwidth: 2,
+        bordercolor: "gray",
+        steps: [
+          { range: [0, maxValue * 0.33], color: "#E3F2FD" },
+          { range: [maxValue * 0.33, maxValue * 0.66], color: "#90CAF9" },
+          { range: [maxValue * 0.66, maxValue], color: "#42A5F5" },
+        ],
+        threshold: {
+          line: { color: "red", width: 4 },
+          thickness: 0.75,
+          value: value,
         },
       },
     },
-  });
+  ];
+
+  const layout = {
+    margin: { t: 25, r: 25, l: 25, b: 25 },
+    font: { size: 12 },
+  };
+
+  Plotly.newPlot(container, data, layout, { responsive: true });
 }
 
-// Function to update the theme of any charts when dark mode is toggled
+/**
+ * Creates a gauge chart for stack temperature visualization
+ * @param {HTMLElement} container - The container element for the chart
+ * @param {number} value - The temperature value to display
+ */
+function createTemperatureGauge(container, value) {
+  // Determine appropriate range for the temperature gauge
+  const maxValue = Math.max(100, Math.ceil((value * 1.2) / 10) * 10);
+
+  // Create the gauge chart using Plotly
+  const data = [
+    {
+      type: "indicator",
+      mode: "gauge+number",
+      value: value,
+      number: { suffix: " °C", font: { size: 24 } },
+      gauge: {
+        axis: { range: [null, maxValue], tickwidth: 1 },
+        bar: { color: "#C62828" },
+        bgcolor: "white",
+        borderwidth: 2,
+        bordercolor: "gray",
+        steps: [
+          { range: [0, maxValue * 0.33], color: "#FFEBEE" },
+          { range: [maxValue * 0.33, maxValue * 0.66], color: "#FFCDD2" },
+          { range: [maxValue * 0.66, maxValue], color: "#EF9A9A" },
+        ],
+        threshold: {
+          line: { color: "red", width: 4 },
+          thickness: 0.75,
+          value: value,
+        },
+      },
+    },
+  ];
+
+  const layout = {
+    margin: { t: 25, r: 25, l: 25, b: 25 },
+    font: { size: 12 },
+  };
+
+  Plotly.newPlot(container, data, layout, { responsive: true });
+}
+
+/**
+ * Updates chart theme based on the current site theme
+ * @param {boolean} isDarkMode - Whether the site is in dark mode
+ */
 function updateChartsTheme(isDarkMode) {
-  // Get all canvas elements for charts
-  const chartElements = document.querySelectorAll('canvas[id$="-chart"]');
+  // Get all plotly charts
+  const chartElements = document.querySelectorAll('[id^="plotly-"]');
 
-  chartElements.forEach((element) => {
-    const chart = Chart.getChart(element);
-    if (chart) {
-      // Update chart theme
-      chart.options.plugins.title.color = isDarkMode ? "#ffffff" : "#212529";
-      chart.options.plugins.subtitle.color = isDarkMode ? "#cccccc" : "#6c757d";
+  chartElements.forEach(function (chartElement) {
+    if (chartElement && chartElement.data) {
+      const update = {
+        paper_bgcolor: isDarkMode ? "#212529" : "white",
+        "font.color": isDarkMode ? "white" : "black",
+        "gauge.bgcolor": isDarkMode ? "#2d2d2d" : "white",
+      };
 
-      // Update the background color of the empty part of the gauge
-      chart.data.datasets[0].backgroundColor[1] = isDarkMode
-        ? "#444444"
-        : "#e9ecef";
-
-      // Update the chart
-      chart.update();
+      Plotly.relayout(chartElement, update);
     }
   });
 }

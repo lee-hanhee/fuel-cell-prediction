@@ -9,8 +9,17 @@ app = Flask(__name__,
             template_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates'),
             static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static'))
 
-# Define a dummy prediction function for Vercel
 def dummy_predict(features):
+    """
+    Simplified prediction function for Vercel deployment.
+    Generates approximate predictions without requiring large model files.
+    
+    Args:
+        features: Array of input parameters [HCC, WCC, LCC, Tamb, Uin, Q]
+    
+    Returns:
+        tuple: (pressure_drop, stack_temperature) predictions
+    """
     # This is a simplified version that doesn't require the large model files
     # Delp prediction - simple linear estimate based on input ranges
     delp = features[0] * 100 + features[1] * 50 + features[2] * 0.5 + features[3] * 0.2 + features[4] * 10 + features[5] * 0.01
@@ -22,11 +31,22 @@ def dummy_predict(features):
 
 @app.route('/')
 def home():
+    """
+    Main route handler that serves the application's homepage.
+    Returns the rendered index.html template with Vercel deployment flag.
+    """
     # Serve the main page
     return render_template("index.html", vercel_deployment=True)  
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    """
+    Handles prediction requests from the form submission.
+    Uses a simplified prediction model suitable for Vercel deployment.
+    
+    Returns:
+        Rendered template with prediction results
+    """
     if request.method == 'POST':
         try:
             # Extract features from the form input and convert them to float
@@ -81,6 +101,13 @@ def predict():
 
 @app.route('/plot', methods=['POST'])
 def plot():
+    """
+    Generates simplified plots for Vercel deployment.
+    Creates either 2D line plots or 3D surface plots without requiring the ML models.
+    
+    Returns:
+        JSON response with plot data
+    """
     try:
         data = request.json
         if not data:
@@ -177,9 +204,14 @@ def plot():
         print("Error generating plot:", e)
         return jsonify(success=False, error=str(e))
 
-# Add a health check route
 @app.route('/health')
 def health_check():
+    """
+    Health check endpoint for monitoring service status.
+    
+    Returns:
+        JSON with status information
+    """
     return jsonify({
         "status": "ok",
         "version": "1.0.0",
@@ -188,9 +220,15 @@ def health_check():
         "mode": "simplified (Vercel deployment)"
     })
 
-# Add basic diagnostic route
 @app.route('/debug')
 def debug_info():
+    """
+    Diagnostic endpoint for debugging deployment issues.
+    Provides information about environment, versions, and file paths.
+    
+    Returns:
+        JSON with debug information
+    """
     import sys
     import os
     import flask
@@ -218,9 +256,18 @@ def debug_info():
 if __name__ == '__main__':
     app.run(debug=True)
     
-# Add an error handler route for debugging
 @app.errorhandler(500)
 def internal_error(error):
+    """
+    Handler for 500 internal server errors.
+    Captures and displays detailed error information for debugging.
+    
+    Args:
+        error: The error that occurred
+        
+    Returns:
+        Rendered error template with error details
+    """
     import traceback
     error_traceback = traceback.format_exc()
     app.logger.error(f"500 error: {error}\n{error_traceback}")
@@ -228,5 +275,14 @@ def internal_error(error):
 
 @app.errorhandler(404)
 def not_found_error(error):
+    """
+    Handler for 404 not found errors.
+    
+    Args:
+        error: The error that occurred
+        
+    Returns:
+        Rendered error template with error details
+    """
     app.logger.error(f"404 error: {error}")
     return render_template('error.html', error=str(error), traceback=None), 404 
