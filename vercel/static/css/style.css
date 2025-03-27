@@ -279,10 +279,3 @@ body[data-bs-theme="dark"] .result-container .card:hover {
 .icon-block .material-icons {
   font-size: inherit;
 }
-
-.bg-logo {
-  background: url({{url_for("static" filename = "/static/forest_conserv.png")}});
-  background-size: 100% 100%;
-  height: 300px;
-  background-size: cover;
-}
