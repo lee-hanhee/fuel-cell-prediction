@@ -29,7 +29,7 @@ This web application provides a user-friendly interface to predict PEMFC (Proton
 │   ├── predict()          # Handles parameter input and model predictions
 │   └── plot()             # Generates 2D/3D visualizations of predictions
 │
-├── api/app.py             # Vercel deployment version
+├── vercel/app.py          # Vercel deployment version
 │   ├── dummy_predict()    # Simplified prediction function for Vercel
 │   ├── home()             # Route handler for Vercel deployment
 │   ├── predict()          # Handles predictions in Vercel environment
