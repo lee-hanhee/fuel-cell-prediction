@@ -1,0 +1,84 @@
+\documentclass{report}
+\usepackage{style}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+
+    \setstretch{1.5}
+    {\Large \textbf{MACHINE LEARNING MODELS FOR PREDICTIVE ANALYSIS OF PRESSURE DROP AND TEMPERATURE IN POLYMER ELECTROLYTE MEMBRANE FUEL CELL STACKS TO FIND OPTIMAL FABRICATION PARAMETERS}}
+    
+    \vspace{5em}
+    
+    {\Large \textbf{HANHEE LEE}}
+    
+    \vfill
+    
+    {\Large ESROP GLOBAL}
+    
+    \vspace{1em} {\Large NATIONAL UNIVERSITY OF SINGAPORE}
+    
+    \vspace{1em} {\Large 2024}
+    
+\end{titlepage}
+
+\pagenumbering{roman}
+
+\begin{center}
+    \section*{Declaration}
+    \input{00_Chapters/00_Declaration.tex}
+\end{center}
+
+\begin{center}
+    \newpage \section*{Acknowledgements}
+    \input{00_Chapters/00_Acknowledgements.tex}
+\end{center}
+
+\begin{center}
+    \newpage \section*{Abstract}    
+    \input{00_Chapters/00_Abstract.tex}
+\end{center}
+
+\newpage \tableofcontents
+
+\newpage \listoffigures
+
+\newpage \listoftables
+
+\newpage \section{List of Symbols}
+\input{00_Chapters/00_List_of_Symbols.tex} 
+
+\pagenumbering{arabic}
+\chapter{Introduction}
+\input{00_Chapters/01_Introduction.tex}
+\section{Fuel Cells}
+
+\chapter{Polymer Electrolyte Membrane Fuel Cells}
+
+\chapter{Neural Networks}
+\input{00_Chapters/02_Neural_Networks.tex}
+    
+\chapter{Literature Review}
+\input{00_Chapters/03_Literature_Review.tex}
+
+\chapter{Materials and Methods}
+\input{00_Chapters/04_Materials_and_Methods.tex}
+    
+\chapter{COMSOL Model}
+\input{00_Chapters/05_COMSOL_Model.tex}
+
+\chapter{Dataset \& Data Preprocessing}
+\input{00_Chapters/00_Dataset_and_Data_Preprocessing.tex}
+
+\chapter{Training and investigation of different models}
+
+\chapter{Pareto Optimization}
+
+\chapter{Conclusion}
+
+\chapter{Outlook}
+
+\section{References}
+
+\end{document}

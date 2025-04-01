@@ -1,0 +1,25 @@
+\newpage \begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{DEFG} % Custom column widths
+\toprule
+\textbf{Header} & \textbf{Symbol} & \textbf{Explanation} & \textbf{Unit} \\ 
+\midrule
+\multicolumn{4}{c}{\textbf{Input Parameters}} \\
+\midrule
+Q & \( Q \) & \textbf{Heat generation} influences membrane hydration and operational efficiency; critical to prevent membrane dry-out and maintain ion conductivity. & \( \text{Wm}^{-2} \) \\
+Tamb & \( T_{amb} \) & \textbf{Ambient temperature of the air} sets baseline thermal conditions; higher temperatures boost performance to a limit before causing potential overheating. & \( \degree C \) \\
+Uin & \( U_{in} \) & \textbf{Airflow velocity} determines oxygen supply rate, essential for maintaining optimal reaction rates and power output. & \( \text{m/s} \) \\
+Wcc & \( W_{cc} \) & \textbf{Cathode channel width} determines oxygen flow and diffusion rates to the cathode, crucial for optimizing reaction efficiency. & \( \text{mm} \) \\
+Hcc & \( H_{cc} \) & \textbf{Cathode channel height} affects gas flow resistance and water removal, essential for maintaining membrane hydration and preventing flooding. & \( \text{mm} \) \\
+Lcc & \( L_{cc} \) & \textbf{Cathode channel length} influences the residence time of reactants and products along the channel, impacting overall fuel cell efficiency. & \( \text{mm} \) \\ 
+Wr & \( W_{r} \) & \textbf{Rib width} supports mechanical stability and maximizes the active area available for reactions, balancing structural support with performance. & \( \text{mm} \) \\
+Hr & \( H_{r} \) & \textbf{Rib height} controls the depth of flow channels, enhancing reactant distribution and efficient water management within the stack. & \( \text{mm} \) \\
+\midrule
+\multicolumn{4}{c}{\textbf{Output Performance Metrics}} \\
+\midrule
+Tsta & \( T_{stack} \) & \textbf{Stack temperature} is crucial for optimal reaction rates, membrane hydration, and to prolong the lifespan. & \( \degree C \) \\ 
+Delp & \( \Delta p \) & \textbf{Pressure drop} indicates the system's resistance to reactant flow; minimizing pressure drop is essential to enhance efficiency and ensure uniform distribution. & \( \text{Pa} \) \\ 
+\bottomrule
+\end{tabularx}
+\caption{Detailed Explanation of Variables}
+\end{table}

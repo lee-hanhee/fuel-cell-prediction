@@ -1,0 +1,77 @@
+\contentsline {section}{\numberline {0.1}List of Symbols}{viii}{section.0.1}%
+\contentsline {chapter}{\numberline {1}Introduction}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Fuel Cells}{2}{section.1.1}%
+\contentsline {chapter}{\numberline {2}Polymer Electrolyte Membrane Fuel Cells}{3}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Neural Networks}{4}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Introduction to Machine Learning}{4}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Structure of Neural Networks}{4}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Types of Layers}{4}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Shallow and Deep Neural Networks}{5}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Process of Supervised Learning}{5}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Forward Propogation}{6}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Activation Functions}{7}{subsection.3.4.1}%
+\contentsline {subsubsection}{Sigmoid}{7}{section*.7}%
+\contentsline {subsubsection}{Hyperbolic Tangent (Tanh)}{7}{section*.8}%
+\contentsline {subsubsection}{Rectified Linear Unit (ReLU)}{7}{section*.9}%
+\contentsline {subsubsection}{Leaky ReLU}{7}{section*.10}%
+\contentsline {section}{\numberline {3.5}Backward Propagation}{7}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Loss Functions}{8}{subsection.3.5.1}%
+\contentsline {subsubsection}{Mean Squared Error (MSE)}{8}{section*.11}%
+\contentsline {subsection}{\numberline {3.5.2}Methods to Update Weights}{8}{subsection.3.5.2}%
+\contentsline {subsubsection}{Stochastic Gradient Descent (SGD)}{9}{section*.12}%
+\contentsline {subsubsection}{Batch Gradient Descent}{9}{section*.13}%
+\contentsline {subsubsection}{Mini-Batch Gradient Descent}{9}{section*.14}%
+\contentsline {subsubsection}{Adaptive Methods}{9}{section*.15}%
+\contentsline {section}{\numberline {3.6}Hyperparameter Optimization}{10}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Grid Search}{10}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Random Search}{10}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}Bayesian Optimization}{10}{subsection.3.6.3}%
+\contentsline {subsection}{\numberline {3.6.4}Hyperband}{10}{subsection.3.6.4}%
+\contentsline {section}{\numberline {3.7}Mathematical Formulation of Neural Networks}{11}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}Introduction}{11}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {3.7.2}Notation}{12}{subsection.3.7.2}%
+\contentsline {subsection}{\numberline {3.7.3}Neural Network Formulas}{12}{subsection.3.7.3}%
+\contentsline {subsection}{\numberline {3.7.4}Layer-Wise Computation}{12}{subsection.3.7.4}%
+\contentsline {subsection}{\numberline {3.7.5}Simple Regression Models}{13}{subsection.3.7.5}%
+\contentsline {subsection}{\numberline {3.7.6}Neural Network Diagram}{13}{subsection.3.7.6}%
+\contentsline {subsection}{\numberline {3.7.7}Hyperparameters}{13}{subsection.3.7.7}%
+\contentsline {section}{\numberline {3.8}Example: Mapping Function in Neural Network}{14}{section.3.8}%
+\contentsline {subsection}{\numberline {3.8.1}Forward Propagation}{14}{subsection.3.8.1}%
+\contentsline {subsection}{\numberline {3.8.2}Backward Propogation}{16}{subsection.3.8.2}%
+\contentsline {chapter}{\numberline {4}Literature Review}{18}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Research trends}{19}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Relevant literature}{20}{section.4.2}%
+\contentsline {chapter}{\numberline {5}Materials and Methods}{25}{chapter.5}%
+\contentsline {chapter}{\numberline {6}COMSOL Model}{27}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Model Assumptions}{27}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Workflow - Pressure Drop}{27}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Workflow - Temperature Stack}{28}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Parameters}{29}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Materials}{29}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Laminar Flow}{30}{section.6.6}%
+\contentsline {subsection}{\numberline {6.6.1}Governing Equations}{30}{subsection.6.6.1}%
+\contentsline {subsection}{\numberline {6.6.2}Initial Values}{30}{subsection.6.6.2}%
+\contentsline {subsection}{\numberline {6.6.3}Boundary Conditions}{30}{subsection.6.6.3}%
+\contentsline {section}{\numberline {6.7}Heat Transfer}{30}{section.6.7}%
+\contentsline {subsection}{\numberline {6.7.1}Governing Equations - Solid}{30}{subsection.6.7.1}%
+\contentsline {subsection}{\numberline {6.7.2}Governing Equations - Fluid}{31}{subsection.6.7.2}%
+\contentsline {subsection}{\numberline {6.7.3}Governing Equations - Thin Layer}{31}{subsection.6.7.3}%
+\contentsline {subsection}{\numberline {6.7.4}Initial Values}{31}{subsection.6.7.4}%
+\contentsline {subsection}{\numberline {6.7.5}Boundary Conditions}{31}{subsection.6.7.5}%
+\contentsline {section}{\numberline {6.8}Mesh}{31}{section.6.8}%
+\contentsline {section}{\numberline {6.9}Study}{31}{section.6.9}%
+\contentsline {subsection}{\numberline {6.9.1}Difference between External and Internal Sweep}{31}{subsection.6.9.1}%
+\contentsline {subsection}{\numberline {6.9.2}Parametric Sweep}{32}{subsection.6.9.2}%
+\contentsline {subsection}{\numberline {6.9.3}Auxilary Sweep}{32}{subsection.6.9.3}%
+\contentsline {section}{\numberline {6.10}Results}{32}{section.6.10}%
+\contentsline {subsection}{\numberline {6.10.1}Accumulated Probe Table: Set 1}{32}{subsection.6.10.1}%
+\contentsline {subsection}{\numberline {6.10.2}3D Plots}{33}{subsection.6.10.2}%
+\contentsline {chapter}{\numberline {7}Dataset \& Data Preprocessing}{35}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Data Preprocessing}{35}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Small Stack}{35}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Large Stack}{43}{subsection.7.1.2}%
+\contentsline {chapter}{\numberline {8}Training and investigation of different models}{51}{chapter.8}%
+\contentsline {chapter}{\numberline {9}Pareto Optimization}{52}{chapter.9}%
+\contentsline {chapter}{\numberline {10}Conclusion}{53}{chapter.10}%
+\contentsline {chapter}{\numberline {11}Outlook}{54}{chapter.11}%
+\contentsline {section}{\numberline {11.1}References}{54}{section.11.1}%
